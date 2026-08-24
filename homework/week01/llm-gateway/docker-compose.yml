@@ -1,0 +1,20 @@
+services:
+  gateway:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # 供应商密钥只在容器进程内可见，不进镜像与配置文件
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:?需要设置 DEEPSEEK_API_KEY}
+      DEEPSEEK_BACKUP_API_KEY: ${DEEPSEEK_BACKUP_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # 覆盖模型/地址示例：
+      # PRIMARY_PROVIDER_MODEL: deepseek-chat
+      # GATEWAY_CONFIG: /app/gateway.yaml
+    volumes:
+      # 自定义配置：cp gateway.example.yaml gateway.yaml 后按需修改
+      - ./gateway.yaml:/app/gateway.yaml:ro
+      - gateway-data:/app/data
+
+volumes:
+  gateway-data:

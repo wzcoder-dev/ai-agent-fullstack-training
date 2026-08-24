@@ -1,3 +1,11 @@
 ex_ctx/*
 .DS_Store
 docs/
+.zcode/
+
+# llm-gateway
+homework/week01/llm-gateway/.venv/
+homework/week01/llm-gateway/data/
+__pycache__/
+.pytest_cache/
+*.egg-info/

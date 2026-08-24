@@ -1,0 +1,81 @@
+# LLM Gateway 配置样例。复制为 gateway.yaml 后按需修改；
+# 环境变量 GATEWAY_CONFIG 可指定其他路径。
+# 所有字符串支持 ${VAR} / ${VAR:默认值} 插值，启动时解析。
+
+auth:
+  # 网关自己的客户端凭据（与供应商密钥无关）
+  keys:
+    - key_id: dev-chat
+      key: gw-chat-dev-key-0001
+      scopes: [chat]
+      rpm: 60                # 每 key 每分钟请求上限
+    - key_id: dev-admin
+      key: gw-admin-dev-key-0001
+      scopes: [chat, admin]
+      rpm: 600
+
+models:
+  # 平台模型名（对调用方暴露）→ 供应商映射
+  general-primary:
+    provider_model: ${PRIMARY_PROVIDER_MODEL:deepseek-v4-flash}
+    base_url: ${PRIMARY_BASE_URL:https://api.deepseek.com}
+    api_key_env: DEEPSEEK_API_KEY          # 只写环境变量名，密钥不进配置文件
+    protocol: chat_completions             # chat_completions | responses
+    structured_output_mode: json_object    # json_schema | json_object | prompt_only | none
+    strategy: priority                     # priority | weighted_round_robin
+    fallbacks: [general-backup]
+    price: { input: 1.0, output: 4.0 }     # USD / 百万 token
+
+  # 加权轮询示例：按 weights 轮选首选，其余成员按序兜底
+  fast-pool:
+    provider_model: ${FAST_POOL_MODEL:deepseek-chat}
+    base_url: https://api.deepseek.com
+    api_key_env: DEEPSEEK_API_KEY
+    protocol: chat_completions
+    structured_output_mode: json_object
+    strategy: weighted_round_robin
+    weights: { fast-pool: 3, general-backup: 1 }
+    fallbacks: [general-backup]
+    price: { input: 0.8, output: 3.2, cached_input: 0.08 }
+
+  general-backup:
+    provider_model: ${BACKUP_PROVIDER_MODEL:deepseek-chat}
+    base_url: ${BACKUP_BASE_URL:https://api.deepseek.com}
+    api_key_env: DEEPSEEK_BACKUP_API_KEY
+    protocol: chat_completions
+    structured_output_mode: prompt_only
+    price: { input: 0.8, output: 3.2 }
+
+  openai-responses:
+    provider_model: ${OPENAI_MODEL:gpt-5.6}
+    base_url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
+    api_key_env: OPENAI_API_KEY
+    protocol: responses
+    structured_output_mode: json_schema
+    price: { input: 2.5, output: 10.0 }
+
+# 非流式调用：每模型传输类错误重试策略（指数退避 + jitter + 总 deadline）
+# retry_statuses 决定哪些上游 HTTP 状态码可重试；超时/连接错误始终可重试
+retry:
+  max_attempts_per_model: 2
+  base_delay: 0.5
+  max_delay: 8.0
+  total_deadline: 20.0
+  retry_statuses: [408, 409, 429, 500, 502, 503, 504]
+
+# 熔断器：连续失败 N 次打开，冷却后半开试探
+breaker:
+  failure_threshold: 3
+  cooldown_seconds: 30
+
+# 结构化输出修复循环：校验失败后追加修复消息重发的最多次数
+structured:
+  max_repairs: 2
+
+# 流式：上游静默超过该秒数发送 keep-alive 心跳
+stream:
+  heartbeat_seconds: 15
+
+prompts_dir: prompts          # 相对配置文件解析
+database:
+  path: data/gateway.db
