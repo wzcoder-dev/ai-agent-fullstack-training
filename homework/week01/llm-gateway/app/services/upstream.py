@@ -53,6 +53,7 @@ class Provider(Protocol):
         timeout_seconds: float,
         response_schema: dict[str, Any] | None,
         sampling: SamplingParams | None = None,
+        json_mode: bool = False,
     ) -> UpstreamResult: ...
 
     def stream(
@@ -71,6 +72,9 @@ def schema_instruction(schema: dict[str, Any]) -> str:
         "不要返回 Markdown 或额外文字："
         f"{json.dumps(schema, ensure_ascii=False)}"
     )
+
+
+JSON_ONLY_INSTRUCTION = "只返回一个合法 JSON 对象，不要返回 Markdown 或额外文字。"
 
 
 class _BaseOpenAIProvider:
@@ -129,6 +133,7 @@ class OpenAIChatProvider(_BaseOpenAIProvider):
         timeout_seconds: float,
         response_schema: dict[str, Any] | None,
         sampling: SamplingParams | None = None,
+        json_mode: bool = False,
     ) -> UpstreamResult:
         # 按模型结构化能力组装请求：原生 schema / json_object / 纯提示三种模式。
         request_messages: list[dict[str, str]] = [message.model_dump() for message in messages]
@@ -155,6 +160,10 @@ class OpenAIChatProvider(_BaseOpenAIProvider):
                 ]
                 if config.structured_output_mode == "json_object":
                     request["response_format"] = {"type": "json_object"}
+        elif json_mode and config.structured_output_mode != "none":
+            # 客户端 json_object（无 Schema）：能声明 json_object 的供应商直接下发；
+            # none 模式模型不设 response_format，由网关出口校验 + 修复兜底。
+            request["response_format"] = {"type": "json_object"}
         completion = await self._client_for(config).chat.completions.create(**request)
         choice = completion.choices[0] if completion.choices else None
         content = (choice.message.content or "") if choice else ""
@@ -223,6 +232,7 @@ class OpenAIResponsesProvider(_BaseOpenAIProvider):
         timeout_seconds: float,
         response_schema: dict[str, Any] | None,
         sampling: SamplingParams | None = None,
+        json_mode: bool = False,
     ) -> UpstreamResult:
         instructions, input_messages = self._split_messages(messages)
         request: dict[str, Any] = {
@@ -246,6 +256,12 @@ class OpenAIResponsesProvider(_BaseOpenAIProvider):
             else:  # Responses 协议不支持 json_object，统一退化为提示内嵌
                 extra = schema_instruction(response_schema)
                 request["instructions"] = f"{instructions}\n\n{extra}" if instructions else extra
+        elif json_mode:
+            # Responses 协议没有无 Schema 的 json_object 形态，退化为指令约束。
+            if instructions:
+                request["instructions"] = f"{instructions}\n\n{JSON_ONLY_INSTRUCTION}"
+            else:
+                request["instructions"] = JSON_ONLY_INSTRUCTION
         response = await self._client_for(config).responses.create(**request)
         usage = response.usage
         return UpstreamResult(

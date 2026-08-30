@@ -37,6 +37,8 @@ class ChatRequest(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=100)
     stream: bool = False
     response_schema: dict[str, Any] | None = None
+    # OpenAI response_format=json_object 语义：只要求输出为合法 JSON，不绑定 Schema。
+    json_mode: bool = False
     temperature: float | None = None
     top_p: float | None = None
     max_tokens: int | None = Field(default=None, ge=1)
@@ -45,8 +47,8 @@ class ChatRequest(BaseModel):
 
     @model_validator(mode="after")
     def check_supported_combination(self) -> ChatRequest:
-        if self.stream and self.response_schema is not None:
-            raise ValueError("stream 与 response_schema 不能同时使用")
+        if self.stream and (self.response_schema is not None or self.json_mode):
+            raise ValueError("stream 与 response_schema/json_mode 不能同时使用")
         return self
 
 

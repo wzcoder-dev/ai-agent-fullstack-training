@@ -75,17 +75,16 @@ def validate_against_schema(instance: Any, schema: dict[str, Any]) -> list[Valid
     return issues
 
 
-def build_repair_message(issues: list[ValidationIssue], schema: dict[str, Any]) -> str:
+def build_repair_message(issues: list[ValidationIssue], schema: dict[str, Any] | None) -> str:
     # 修复提示：只修正格式与字段，不改变任务语义（课程 1-5 原则）。
+    # schema 为 None 对应 json_object 模式：只修复 JSON 合法性，不展示 Schema。
     lines = [
-        "上一次输出未通过 JSON Schema 校验。请保持原任务含义不变，",
+        "上一次输出未通过结构化校验。请保持原任务含义不变，",
         "只修正 JSON 语法、字段、类型或字段组合，重新输出完整的 JSON，不要附加解释或 Markdown。",
-        "",
-        "要求符合的 JSON Schema：",
-        json.dumps(schema, ensure_ascii=False, indent=2),
-        "",
-        "发现的问题：",
     ]
+    if schema is not None:
+        lines += ["", "要求符合的 JSON Schema：", json.dumps(schema, ensure_ascii=False, indent=2)]
+    lines += ["", "发现的问题："]
     for issue in issues:
         lines.append(f"- {issue.path}: {issue.code} — {issue.message}")
     if not issues:

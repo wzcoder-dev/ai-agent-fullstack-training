@@ -33,7 +33,7 @@ print(response.choices[0].message.content)
 # client.models.list()
 ```
 
-兼容入口复用网关全部治理链路（重试、fallback、结构化修复、限流、审计）；约束见 DEVELOPMENT.md §5.3（工具 role、非 json_schema 的 response_format、流式+schema 组合会被显式拒绝）。
+兼容入口复用网关全部治理链路（重试、fallback、结构化修复、限流、审计）；约束见 DEVELOPMENT.md §5.3（工具 role、json_schema/json_object 之外的 response_format、流式+结构化组合会被显式拒绝）。
 
 ## 非流式调用（自有协议）
 

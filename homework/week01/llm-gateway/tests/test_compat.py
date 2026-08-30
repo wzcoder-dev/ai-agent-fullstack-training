@@ -6,7 +6,15 @@ import json
 
 import httpx
 
-from tests.conftest import BACKUP_HOST, PRIMARY_HOST, chat_completion, chat_request_bodies
+from tests.conftest import (
+    ANSWER_SCHEMA,
+    BACKUP_HOST,
+    OPENAI_HOST,
+    PRIMARY_HOST,
+    chat_completion,
+    chat_request_bodies,
+    responses_completion,
+)
 
 
 def _compat_payload(**overrides) -> dict:
@@ -95,10 +103,68 @@ async def test_compat_structured_output_via_response_format(client: httpx.AsyncC
     assert "JSON Schema" in upstream["messages"][0]["content"]
 
 
-async def test_compat_rejects_other_response_format_types(client: httpx.AsyncClient) -> None:
+async def test_compat_json_schema_native_end_to_end(client: httpx.AsyncClient, harness) -> None:
+    # json_schema 请求落到原生 Schema 能力模型（Responses 协议）：
+    # 上游收到 text.format=json_schema，出口按 Schema 校验。
+    harness.responses_transport.scripts[OPENAI_HOST] = [responses_completion('{"answer": "ok"}')]
+    response = await client.post(
+        "/v1/chat/completions",
+        json=_compat_payload(
+            model="openai-responses",
+            response_format={
+                "type": "json_schema",
+                "json_schema": {"name": "answer", "strict": True, "schema": ANSWER_SCHEMA},
+            },
+        ),
+    )
+    assert response.status_code == 200
+    assert json.loads(response.json()["choices"][0]["message"]["content"]) == {"answer": "ok"}
+
+    upstream = json.loads(harness.responses_transport.requests[0].content)
+    assert upstream["text"]["format"]["type"] == "json_schema"
+    assert upstream["text"]["format"]["schema"] == ANSWER_SCHEMA
+
+
+async def test_compat_json_object_mode_end_to_end(client: httpx.AsyncClient, harness) -> None:
+    # json_object：无 Schema，上游收 response_format=json_object 且不注入 Schema 提示；
+    # 出口校验只要求内容可解析为合法 JSON。
+    harness.chat_transport.scripts[PRIMARY_HOST] = [chat_completion('{"answer": "ok"}')]
     response = await client.post(
         "/v1/chat/completions",
         json=_compat_payload(response_format={"type": "json_object"}),
+    )
+    assert response.status_code == 200
+    assert json.loads(response.json()["choices"][0]["message"]["content"]) == {"answer": "ok"}
+
+    upstream = chat_request_bodies(harness.chat_transport)[0]
+    assert upstream["response_format"] == {"type": "json_object"}
+    assert upstream["messages"][0]["role"] == "user"
+
+
+async def test_compat_json_object_repair_end_to_end(client: httpx.AsyncClient, harness) -> None:
+    # 修复循环端到端：首次输出非法 JSON → 追加修复消息重发 → 第二次合法后放行。
+    harness.chat_transport.scripts[PRIMARY_HOST] = [
+        chat_completion("这不是 JSON"),
+        chat_completion('{"answer": "fixed"}'),
+    ]
+    response = await client.post(
+        "/v1/chat/completions",
+        json=_compat_payload(response_format={"type": "json_object"}),
+    )
+    assert response.status_code == 200
+    assert json.loads(response.json()["choices"][0]["message"]["content"]) == {"answer": "fixed"}
+
+    bodies = chat_request_bodies(harness.chat_transport)
+    assert len(bodies) == 2
+    repair = bodies[1]["messages"][-1]
+    assert repair["role"] == "user"
+    assert "合法 JSON" in repair["content"]
+
+
+async def test_compat_rejects_other_response_format_types(client: httpx.AsyncClient) -> None:
+    response = await client.post(
+        "/v1/chat/completions",
+        json=_compat_payload(response_format={"type": "text"}),
     )
     assert response.status_code == 400
     assert response.json()["error"]["code"] == "unsupported_response_format"

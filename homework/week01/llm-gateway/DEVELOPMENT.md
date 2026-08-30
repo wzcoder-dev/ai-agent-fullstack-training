@@ -38,7 +38,7 @@
 | Prompt 模板 | `string.Template` + 代码内字典 | 模板文件 + frontmatter + Jinja2 StrictUndefined + 注入防护 + 指纹 |
 | 流式 | 裸 `content.delta` | 事件带 `seq`/`id`、心跳、SQLite checkpoint、Last-Event-ID 重放 |
 | 审计 | 内存列表 | SQLite `traces` + `stream_events` 表 + 用量聚合接口 |
-| 治理 | 无 | 鉴权（多 Key + scope）、per-key 限流、熔断器 |
+| 治理 | 无 | 鉴权（多 Key + scope）、per-(key, model) 限流、熔断器 |
 | 部署 | 无 | Dockerfile + docker-compose |
 
 ### 1.3 对官方 1-7 课程的吸收记录
@@ -55,7 +55,7 @@
 | 429 响应附 `Retry-After` 头 | `core/errors.py` |
 | `/readyz` 就绪检查、ruff、uv.lock | 路由与工程化配置 |
 
-**有意不吸收的差异**（设计取舍，非遗漏）：透传式 SSE（保留类型化事件 + checkpoint 重放）、修复循环跨模型重路由（保留固定原模型修复）、API 发布式模板管理（保留文件 + frontmatter 治理）、透传 `response_format`（兼容入口仅接受 `json_schema`，流式与结构化仍互斥）。
+**有意不吸收的差异**（设计取舍，非遗漏）：透传式 SSE（保留类型化事件 + checkpoint 重放）、修复循环跨模型重路由（保留固定原模型修复）、API 发布式模板管理（保留文件 + frontmatter 治理）、`response_format` 支持 `json_schema` 与 `json_object`（流式与结构化仍互斥）。
 
 ## 2. 架构总览
 
@@ -66,7 +66,7 @@ Client(Agent)                         上游供应商
 ┌─────────────────────────── app/ ────────┴─────────────────┐
 │ api/routes.py   入口：chat / responses / stream / 管理    │
 │   ├ core/auth.py        Bearer Key + scope               │
-│   ├ core/ratelimit.py   per-key 固定窗口限流              │
+│   ├ core/ratelimit.py   per-(key, model) 固定窗口限流    │
 │   └ core/errors.py      异常归一化 + 统一错误体            │
 │ services/gateway.py   编排：重试→结构化→修复→fallback     │
 │   ├ services/router.py    模型白名单、fallback 链、熔断器  │
@@ -99,7 +99,7 @@ llm-gateway/
 │   ├── api/compat.py       # OpenAI Compatible 入口（/v1/chat/completions、/v1/models）
 │   ├── core/errors.py      # GatewayError、内部错误码、异常归一化、全局异常处理
 │   ├── core/auth.py        # Bearer 鉴权 + scope 校验
-│   ├── core/ratelimit.py   # per-key 固定窗口限流
+│   ├── core/ratelimit.py   # per-(key, model) 固定窗口限流
 │   ├── services/gateway.py # 调用编排、重试、修复循环、流式事件
 │   ├── services/upstream.py# Provider 协议 + Chat/Responses 两种 Adapter
 │   ├── services/router.py  # 模型注册表、fallback 链、加权轮询、熔断器、定价
@@ -247,7 +247,7 @@ response = client.chat.completions.create(
 
 - 未知参数宽容忽略（`extra="allow"`），SDK 升级不会导致 422；`temperature/top_p/max_tokens/max_completion_tokens` 透传上游。
 - 消息 role 仅支持 `system/developer/user/assistant`（developer 归一为 system）；`tool/function` 显式 400 `unsupported_role`——本网关不转发工具调用协议。
-- `response_format` 仅接受 `type=json_schema`（映射到统一 `response_schema`，享受提取 + 校验 + 修复循环）；其余类型 400 `unsupported_response_format`。
+- `response_format` 接受 `type=json_schema`（映射到统一 `response_schema`，享受提取 + 校验 + 修复循环）与 `type=json_object`（映射到 `json_mode`：无 Schema，出口只校验输出可解析为合法 JSON，失败同样走修复循环）；其余类型 400 `unsupported_response_format`。
 - 流式与 `json_schema` 仍互斥（400）：流式出口无法做无损结构化校验，静默放弃校验比明确拒绝更危险。
 - 流式翻译为 OpenAI chunk 形态（`chat.completion.chunk` + `data: [DONE]`），`stream_options.include_usage` 时末块携带 usage；流中错误翻译为 OpenAI 风格 `{"error": {...}}` 事件。
 
@@ -285,12 +285,12 @@ response = client.chat.completions.create(
 | 400 | `use_stream_endpoint` | `stream: true` 打到非流式端点 |
 | 400 | `unknown_prompt_template` / `missing_prompt_variable` | 模板不存在 / 缺变量 |
 | 400 | `invalid_json_schema` | 请求携带的 schema 本身不合法 |
-| 400 | `unsupported_role` / `unsupported_content` / `unsupported_response_format` | 兼容入口的协议约束（工具 role、非文本 content、非 json_schema 格式） |
+| 400 | `unsupported_role` / `unsupported_content` / `unsupported_response_format` | 兼容入口的协议约束（工具 role、非文本 content、非 json_schema/json_object 格式） |
 | 401 | `unauthorized` | 缺少/错误的 Bearer Key |
 | 403 | `insufficient_scope` | Key 无 admin 等 scope |
 | 404 | `unknown_stream` | 重放端点找不到该请求的事件 |
 | 422 | `invalid_request` | Pydantic 校验失败（未知字段、类型错误、非法组合） |
-| 429 | `rate_limited` | 超过 Key 的 rpm 限额（响应附 `Retry-After: 1` 头） |
+| 429 | `rate_limited` | 超过 Key 在该模型的 rpm 限额（(key, model) 隔离；响应附 `Retry-After: 1` 头） |
 | 502 | `invalid_json` / `schema_validation_failed` | 修复循环耗尽仍不是合法 JSON / 不符合 schema |
 | 502 | `model_unavailable` | 路由链上所有模型重试后仍失败 |
 | 503 | `circuit_open` | 路由链上所有模型都在熔断中 |
@@ -421,7 +421,7 @@ CREATE TABLE stream_events (     -- 流式 checkpoint
 | 退避重试 | test_governance.py | 同模型 2 次失败第 3 次成功（attempts） |
 | 跨模型 fallback | test_governance.py | 主模型耗尽→备模型，`attempts` 正确 |
 | 熔断 | test_governance.py | 连续失败→`healthz` open→冷却半开→恢复 closed |
-| 限流 | test_governance.py | rpm=1 时第 2 次 429 |
+| 限流 | test_governance.py | rpm=1 时第 2 次 429；同 Key 跨模型配额隔离 |
 | 模板治理 | test_prompts.py | 列表/详情/双版本差异/缺变量/未知模板 |
 | 注入防护 | test_prompts.py | 恶意变量被包在 untrusted_data 内，指令未被清洗 |
 | 管理接口 | test_governance.py | traces 落库字段、usage 聚合、scope 403 |
@@ -464,7 +464,7 @@ CREATE TABLE stream_events (     -- 流式 checkpoint
 | 重试 | retry_statuses + 每路由上限 | retry_statuses（吸收）+ 指数退避 + 请求级 deadline |
 | 路由策略 | priority / weighted_round_robin | priority / weighted_round_robin（吸收） |
 | 审计 | usage_events（含 cached/fallbacks） | traces + 聚合接口 + cached（吸收）+ cancelled（吸收） |
-| 限流 | 全局令牌桶 | per-key 固定窗口 + scopes |
+| 限流 | 全局令牌桶 | per-(key, model) 固定窗口 + scopes |
 | 错误 | OpenAI 错误对象 | 稳定错误码表 + 10 类内部归一化 + request_id + Retry-After（吸收） |
 
 官方有而本项目未吸收：透传式 SSE（与事件化协议冲突）、API 发布式模板（与文件治理取舍）、缓存 token 明细进用量聚合、加权策略下的 provider 级熔断。

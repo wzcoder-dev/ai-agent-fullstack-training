@@ -5,7 +5,7 @@
 （重试、fallback、结构化修复、模板、审计全部复用）。
 
 与官方 1-7 的差异是有意为之的治理约束：
-- 兼容入口同样遵守"流式与 response_format.json_schema 互斥"（本网关无法在流式
+- 兼容入口同样遵守"流式与 response_format（json_schema/json_object）互斥"（本网关无法在流式
   出口做无损结构化校验，静默放弃校验比明确拒绝更危险）；
 - 只接受 system/developer/user/assistant 四种 role，工具调用消息显式 400；
 - 未知参数宽容忽略（extra="allow"），但已知参数仍走网关的校验与计费链路。
@@ -102,31 +102,36 @@ def _to_internal_messages(payload: CompatChatRequest) -> list[Message]:
     return internal
 
 
-def _schema_from_response_format(response_format: dict[str, Any] | None) -> dict[str, Any] | None:
+def _schema_from_response_format(response_format: dict[str, Any] | None) -> tuple[dict[str, Any] | None, bool]:
+    # 返回 (schema, json_mode)：json_schema 携带 Schema 走严格校验；
+    # json_object 只要求输出为合法 JSON（无 Schema），映射到统一协议的 json_mode。
     if response_format is None:
-        return None
+        return None, False
     format_type = response_format.get("type")
     if format_type == "json_schema":
         schema = (response_format.get("json_schema") or {}).get("schema")
         if not isinstance(schema, dict):
             raise GatewayError("unsupported_response_format", "response_format.json_schema 缺少 schema", 400)
-        return schema
+        return schema, False
+    if format_type == "json_object":
+        return None, True
     raise GatewayError(
         "unsupported_response_format",
-        "兼容入口仅支持 response_format.type=json_schema",
+        "兼容入口仅支持 response_format.type=json_schema 或 json_object",
         400,
     )
 
 
 def _to_chat_request(payload: CompatChatRequest, *, stream: bool) -> ChatRequest:
-    response_schema = _schema_from_response_format(payload.response_format)
-    if stream and response_schema is not None:
-        raise GatewayError("unsupported_combination", "流式输出不支持 response_format.json_schema", 400)
+    response_schema, json_mode = _schema_from_response_format(payload.response_format)
+    if stream and (response_schema is not None or json_mode):
+        raise GatewayError("unsupported_combination", "流式输出不支持 response_format", 400)
     return ChatRequest(
         model=payload.model,
         messages=_to_internal_messages(payload),
         stream=stream,
         response_schema=response_schema,
+        json_mode=json_mode,
         temperature=payload.temperature,
         top_p=payload.top_p,
         max_tokens=payload.max_completion_tokens or payload.max_tokens,

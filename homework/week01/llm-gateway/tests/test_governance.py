@@ -104,6 +104,27 @@ async def test_rate_limit_per_key(tmp_path, monkeypatch) -> None:
     assert second.json()["error"]["code"] == "rate_limited"
 
 
+async def test_rate_limit_model_isolation(tmp_path, monkeypatch) -> None:
+    # 同一 Key 下模型配额隔离：A 模型打满 rpm 后 B 模型仍可用，A 的下一次请求 429。
+    harness = build_harness(tmp_path, monkeypatch, rpm=1)
+    try:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=harness.app),
+            base_url="http://t",
+            headers={"authorization": f"Bearer {CHAT_KEY}"},
+        ) as client:
+            first_primary = await client.post("/v1/chat", json=simple_chat_request(model="general-primary"))
+            backup = await client.post("/v1/chat", json=simple_chat_request(model="general-backup"))
+            second_primary = await client.post("/v1/chat", json=simple_chat_request(model="general-primary"))
+    finally:
+        await harness.app.state.gateway.aclose()
+        harness.app.state.store.close()
+    assert first_primary.status_code == 200
+    assert backup.status_code == 200
+    assert second_primary.status_code == 429
+    assert second_primary.json()["error"]["code"] == "rate_limited"
+
+
 async def test_traces_and_usage_summary(client: httpx.AsyncClient, admin_client, harness) -> None:
     payload = simple_chat_request(
         response_schema=ANSWER_SCHEMA,

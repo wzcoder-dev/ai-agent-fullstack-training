@@ -101,8 +101,8 @@ class GatewayService:
 
     def validate_stream_request(self, request: ChatRequest) -> None:
         # 流式端点的 fail-fast 校验：错误发生在 200 响应头之前，可返回正确状态码。
-        if request.response_schema is not None:
-            raise GatewayError("unsupported_combination", "流式输出不支持 response_schema", 400)
+        if request.response_schema is not None or request.json_mode:
+            raise GatewayError("unsupported_combination", "流式输出不支持 response_schema/json_mode", 400)
         self.prepare(request)
 
     async def chat(self, request: ChatRequest, key_id: str) -> ChatResponse:
@@ -138,6 +138,7 @@ class GatewayService:
                         request.timeout_seconds,
                         request.response_schema,
                         sampling,
+                        json_mode=request.json_mode,
                     )
                 except GatewayError as exc:
                     # 配置类错误（如密钥缺失）：不重试，换下一模型尝试 fallback。
@@ -156,7 +157,7 @@ class GatewayService:
                         continue
                     break
 
-                if request.response_schema is None:
+                if request.response_schema is None and not request.json_mode:
                     return await self._finish_success(
                         request_id=request_id,
                         key_id=key_id,
@@ -172,12 +173,16 @@ class GatewayService:
                         finish_reason=result.finish_reason,
                     )
 
-                # 结构化出口：提取 → 校验 → 修复循环（课程 1-5）。
+                # 结构化出口：提取 → 校验（json_object 模式只要求可解析）→ 修复循环（课程 1-5）。
                 parsed: Any = None
                 issues: list[ValidationIssue]
                 try:
                     parsed = extract_json(result.content)
-                    issues = validate_against_schema(parsed, request.response_schema)
+                    issues = (
+                        validate_against_schema(parsed, request.response_schema)
+                        if request.response_schema is not None
+                        else []
+                    )
                 except JsonExtractionError:
                     parsed = None
                     issues = [ValidationIssue(path="$", code="invalid_json", message="输出不是合法 JSON")]
