@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Gateway 请求全链路 · 快速复习</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #07111f;
+    --surface: #0d1b2d;
+    --surface-2: #11243a;
+    --surface-3: #172e48;
+    --line: #28425f;
+    --text: #e8f1fb;
+    --muted: #9cb0c6;
+    --blue: #63b3ff;
+    --cyan: #65e6dc;
+    --green: #66d69e;
+    --amber: #ffc766;
+    --red: #ff7f88;
+    --purple: #bd9cff;
+    --shadow: 0 18px 50px rgba(0, 0, 0, .25);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(72, 151, 255, .18), transparent 32rem),
+      radial-gradient(circle at 90% 5%, rgba(101, 230, 220, .10), transparent 28rem),
+      var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+  }
+
+  button { font: inherit; }
+  code, pre { font-family: var(--mono); }
+
+  .shell { width: min(1500px, 100%); margin: 0 auto; padding: 34px 28px 80px; }
+  .hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr); gap: 28px; align-items: end; }
+  .eyebrow { color: var(--cyan); font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  h1 { margin: 8px 0 10px; font-size: clamp(28px, 4vw, 50px); line-height: 1.12; letter-spacing: -.035em; }
+  .lead { max-width: 850px; margin: 0; color: var(--muted); font-size: 16px; }
+  .memory-rule {
+    border: 1px solid rgba(101, 230, 220, .34);
+    border-radius: 16px;
+    padding: 18px 20px;
+    background: rgba(12, 34, 50, .72);
+    box-shadow: var(--shadow);
+  }
+  .memory-rule strong { display: block; color: var(--cyan); margin-bottom: 7px; }
+  .memory-rule span { color: #c4d4e5; font-size: 14px; }
+
+  .toolbar {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(13, 27, 45, .86);
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+  }
+  .scenario {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    padding: 9px 13px;
+    cursor: pointer;
+  }
+  .scenario:hover { color: var(--text); background: var(--surface-2); }
+  .scenario[aria-pressed="true"] { color: #07111f; background: var(--cyan); font-weight: 750; }
+
+  .overview { margin-top: 22px; border: 1px solid var(--line); background: rgba(13, 27, 45, .88); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+  .overview-head { display: flex; justify-content: space-between; gap: 18px; align-items: baseline; margin-bottom: 16px; }
+  .overview h2 { font-size: 18px; margin: 0; }
+  .overview-head span { color: var(--muted); font-size: 13px; }
+  .pipeline { display: grid; grid-template-columns: repeat(9, minmax(105px, 1fr)); gap: 23px; overflow-x: auto; padding: 6px 4px 12px; }
+  .stage {
+    position: relative;
+    min-height: 105px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    color: var(--muted);
+    background: var(--surface);
+    text-align: left;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease;
+  }
+  .stage:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -20px;
+    top: 39px;
+    color: #57718d;
+    font-size: 18px;
+  }
+  .stage:hover { transform: translateY(-2px); border-color: #46719c; }
+  .stage.active { border-color: var(--cyan); background: linear-gradient(145deg, rgba(27, 66, 84, .95), rgba(13, 35, 54, .95)); color: var(--text); box-shadow: 0 0 0 2px rgba(101, 230, 220, .10); }
+  .stage.future { border-style: dashed; }
+  .stage .num { display: block; color: var(--cyan); font: 700 11px var(--mono); }
+  .stage .name { display: block; margin-top: 7px; font-weight: 750; font-size: 13px; line-height: 1.3; }
+  .stage .module { display: block; margin-top: 7px; color: #7991a9; font: 10px/1.35 var(--mono); overflow-wrap: anywhere; }
+
+  .workspace { margin-top: 22px; display: grid; grid-template-columns: minmax(0, .85fr) minmax(420px, 1.15fr); gap: 22px; align-items: start; }
+  .panel { border: 1px solid var(--line); border-radius: 18px; background: rgba(13, 27, 45, .9); box-shadow: var(--shadow); overflow: hidden; }
+  .panel-head { display: flex; justify-content: space-between; gap: 15px; align-items: center; padding: 15px 18px; border-bottom: 1px solid var(--line); background: rgba(17, 36, 58, .86); }
+  .panel-head h2 { margin: 0; font-size: 15px; }
+  .status { color: var(--cyan); font: 12px var(--mono); }
+  .packet { margin: 0; padding: 18px; min-height: 560px; max-height: 720px; overflow: auto; color: #cce8ff; font-size: 12px; line-height: 1.65; white-space: pre-wrap; tab-size: 2; }
+
+  .detail { padding: 22px; min-height: 560px; }
+  .detail-top { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+  .detail h2 { margin: 0; font-size: 25px; line-height: 1.25; }
+  .file { margin-top: 8px; color: var(--cyan); font: 12px var(--mono); overflow-wrap: anywhere; }
+  .step-nav { display: flex; gap: 8px; }
+  .step-nav button { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); color: var(--text); background: var(--surface-2); cursor: pointer; }
+  .step-nav button:hover { border-color: var(--cyan); }
+  .purpose { margin: 20px 0 0; padding: 15px 17px; border-left: 3px solid var(--blue); background: rgba(23, 46, 72, .72); color: #d2dfed; border-radius: 0 12px 12px 0; }
+  .io { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .mini { border: 1px solid var(--line); border-radius: 13px; padding: 14px 15px; background: rgba(7, 17, 31, .42); }
+  .mini h3, .checklist h3, .decision h3 { margin: 0 0 9px; font-size: 13px; color: var(--amber); }
+  .mini p { margin: 0; color: var(--muted); font-size: 13px; }
+  .checklist { margin-top: 18px; }
+  .checklist ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .checklist li { position: relative; padding: 10px 12px 10px 35px; border: 1px solid rgba(40, 66, 95, .8); border-radius: 10px; background: rgba(7, 17, 31, .35); color: #c8d7e6; font-size: 13px; }
+  .checklist li::before { content: "✓"; position: absolute; left: 13px; color: var(--green); font-weight: 800; }
+  .decision { margin-top: 18px; border: 1px solid rgba(255, 199, 102, .28); border-radius: 13px; padding: 14px 15px; background: rgba(74, 51, 14, .18); }
+  .decision p { margin: 0; color: #ead7b3; font-size: 13px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+  .tag { border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; color: #aebfd0; font: 11px var(--mono); }
+
+  .boundary { margin-top: 24px; display: grid; grid-template-columns: 1fr 64px 1fr; align-items: stretch; gap: 14px; }
+  .boundary-card { border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: rgba(13, 27, 45, .84); }
+  .boundary-card h2 { margin: 0 0 10px; font-size: 17px; }
+  .boundary-card p { margin: 0; color: var(--muted); font-size: 13px; }
+  .boundary-card ul { margin: 12px 0 0; padding-left: 20px; color: #ccd9e6; font-size: 13px; }
+  .boundary-card.agent { border-color: rgba(189, 156, 255, .45); }
+  .boundary-card.gateway { border-color: rgba(101, 230, 220, .45); }
+  .not-equal { display: grid; place-items: center; font-size: 30px; color: var(--amber); font-weight: 800; }
+  .warning { margin-top: 22px; border: 1px dashed rgba(255, 127, 136, .55); border-radius: 16px; padding: 17px 19px; background: rgba(72, 20, 30, .23); }
+  .warning strong { color: var(--red); }
+  .warning p { margin: 6px 0 0; color: #dcbcc1; font-size: 13px; }
+  footer { margin-top: 30px; color: #7890a8; font-size: 12px; text-align: center; }
+
+  @media (max-width: 980px) {
+    .hero, .workspace { grid-template-columns: 1fr; }
+    .packet { min-height: 340px; max-height: 500px; }
+    .detail { min-height: 0; }
+    .pipeline { grid-template-columns: repeat(9, 130px); }
+  }
+  @media (max-width: 650px) {
+    .shell { padding: 24px 14px 60px; }
+    .toolbar { position: static; }
+    .io, .boundary { grid-template-columns: 1fr; }
+    .not-equal { min-height: 38px; }
+    .overview-head { display: block; }
+    .overview-head span { display: block; margin-top: 6px; }
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Week 01 · Request Lifecycle</div>
+      <h1>从输入到输出，走完一次 LLM Gateway</h1>
+      <p class="lead">选择场景，再按步骤查看“当前数据长什么样、模块负责什么、工程上必须守住什么”。目标不是背代码，而是能审查 AI 生成的实现有没有破坏边界。</p>
+    </div>
+    <aside class="memory-rule">
+      <strong>复习时只问三个问题</strong>
+      <span>这一层接收什么？它允许做什么决定？它必须留下什么证据？</span>
+    </aside>
+  </section>
+
+  <nav class="toolbar" aria-label="请求场景">
+    <button class="scenario" data-scenario="normal" aria-pressed="true">普通成功</button>
+    <button class="scenario" data-scenario="structured" aria-pressed="false">结构化修复</button>
+    <button class="scenario" data-scenario="fallback" aria-pressed="false">网络失败 → fallback</button>
+    <button class="scenario" data-scenario="stream" aria-pressed="false">流式首块后失败</button>
+    <button class="scenario" data-scenario="tools" aria-pressed="false">未来：Tool Calling</button>
+  </nav>
+
+  <section class="overview">
+    <div class="overview-head">
+      <h2 id="scenario-title">普通非流式请求</h2>
+      <span id="scenario-summary">一次成功的模型调用，经过统一入口、路由、Adapter、审计后返回。</span>
+    </div>
+    <div class="pipeline" id="pipeline" aria-label="Gateway 处理链路"></div>
+  </section>
+
+  <section class="workspace">
+    <article class="panel">
+      <div class="panel-head">
+        <h2>当前数据包</h2>
+        <span class="status" id="packet-label">HTTP REQUEST</span>
+      </div>
+      <pre class="packet" id="packet"></pre>
+    </article>
+
+    <article class="panel detail">
+      <div class="detail-top">
+        <div>
+          <div class="eyebrow" id="step-number">STEP 01</div>
+          <h2 id="step-title">客户端输入</h2>
+          <div class="file" id="step-file">HTTP client / Agent</div>
+        </div>
+        <div class="step-nav">
+          <button id="prev" type="button" aria-label="上一步">←</button>
+          <button id="next" type="button" aria-label="下一步">→</button>
+        </div>
+      </div>
+      <p class="purpose" id="step-purpose"></p>
+      <div class="io">
+        <section class="mini"><h3>接收</h3><p id="step-input"></p></section>
+        <section class="mini"><h3>交付下一层</h3><p id="step-output"></p></section>
+      </div>
+      <section class="checklist">
+        <h3>工程化必须把控</h3>
+        <ul id="step-checks"></ul>
+      </section>
+      <section class="decision">
+        <h3>这一层允许做的决定</h3>
+        <p id="step-decision"></p>
+      </section>
+      <div class="tags" id="step-tags"></div>
+    </article>
+  </section>
+
+  <section class="boundary">
+    <article class="boundary-card gateway">
+      <h2>Gateway 完成：一次模型调用结束</h2>
+      <p>返回文本、结构化结果或 Tool Call，并附带本轮状态、用量和追踪信息。</p>
+      <ul>
+        <li>可以执行网络重试、路由 fallback、格式修复</li>
+        <li>不能执行真实业务 Tool</li>
+        <li>不能判断整个用户任务一定结束</li>
+      </ul>
+    </article>
+    <div class="not-equal">≠</div>
+    <article class="boundary-card agent">
+      <h2>Agent 完成：整个任务结束</h2>
+      <p>Agent Loop 读取模型本轮输出，决定执行工具、继续下一轮，或者把最终答案交给用户。</p>
+      <ul>
+        <li>收到普通 assistant message：可能结束</li>
+        <li>收到 tool_calls：执行工具并继续 Loop</li>
+        <li>达到预算、拒绝或不可恢复错误：停止</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="warning">
+    <strong>当前作业的真实边界</strong>
+    <p>现有 OpenAI Compatible 入口明确拒绝 <code>role=tool</code> / <code>role=function</code>，也没有完整透传 <code>tools</code>、<code>tool_calls</code> 与流式 Tool Call 参数。因此它当前是模型调用 Gateway；“未来：Tool Calling”场景展示的是后续扩展目标，不代表已经实现。</p>
+  </section>
+
+  <footer>依据 homework/week01/llm-gateway 当前实现整理 · 用模块边界复习，不用逐行背诵</footer>
+</main>
+
+<script>
+(() => {
+  const baseStages = [
+    {
+      id: "input", name: "客户端输入", module: "Agent / HTTP Client", file: "调用方",
+      purpose: "构造一次模型调用请求。对于完整 Agent，这里会由 Agent Loop 选择当前 messages 与可见 tools；Gateway 不负责生成业务上下文。",
+      input: "用户目标、消息历史、模型别名、输出模式和预算。",
+      output: "HTTP 请求体 + Authorization Header。",
+      checks: ["请求只携带模型调用所需数据，不携带 Provider 密钥", "tools 只包含公开名称、描述和 Schema，绝不包含 handler", "为超时、输出长度和上下文准备明确预算", "不要把用户身份、审批状态伪装成模型可填写参数"],
+      decision: "调用哪个 Gateway 入口、传入哪些已有上下文；不决定 Provider 真实地址。",
+      tags: ["messages", "model alias", "stream", "response_schema"]
+    },
+    {
+      id: "api", name: "入口与协议校验", module: "api/routes.py + schemas.py", file: "app/api/routes.py · app/schemas.py",
+      purpose: "把外部 HTTP 请求收进稳定协议，完成 fail-fast 校验，并选择非流式、流式或兼容入口。",
+      input: "Bearer Header 与 JSON Body。",
+      output: "类型化 ChatRequest；非法请求直接变成稳定 4xx。",
+      checks: ["自有协议 extra=forbid，未知字段不能悄悄丢失", "stream 请求必须进入专用端点", "stream 与 response_schema 的不支持组合要在响应头前拒绝", "所有错误使用稳定错误体，而不是泄露堆栈"],
+      decision: "请求是否符合公开 API 契约；不能决定重试或 fallback。",
+      tags: ["FastAPI", "Pydantic", "422", "fail-fast"]
+    },
+    {
+      id: "guard", name: "鉴权与限流", module: "core/auth.py + ratelimit.py", file: "app/core/auth.py · app/core/ratelimit.py",
+      purpose: "确认谁在调用 Gateway、是否具备 chat/admin scope，并在消耗上游 Token 前执行配额控制。",
+      input: "Bearer Key、所需 scope、key 对应 RPM。",
+      output: "可信 AuthContext(key_id, scopes)，或 401/403/429。",
+      checks: ["Gateway Key 与 Provider Key 必须分离", "密钥比较使用 constant-time compare", "鉴权必须早于模型调用", "当前限流器仅单进程有效；多副本部署要外置状态"],
+      decision: "允许、拒绝或限流；鉴权失败不能重试、不能 fallback。",
+      tags: ["identity", "scope", "RPM", "Retry-After"]
+    },
+    {
+      id: "prepare", name: "请求准备", module: "GatewayService.prepare", file: "app/services/gateway.py · app/services/prompts.py",
+      purpose: "验证 response_schema、按名称和版本渲染 Prompt，并把受治理的 system message 放到消息最前面。",
+      input: "ChatRequest、PromptSelection、response_schema。",
+      output: "最终内部 messages + 候选模型链。",
+      checks: ["调用方只能选择模板与变量，不能上传任意模板正文", "StrictUndefined：缺变量必须失败", "模板需要版本与指纹以支持审计和回滚", "用户内容始终视为不可信数据，不能升级成系统指令"],
+      decision: "模板是否存在、变量是否完整、Schema 本身是否合法。",
+      tags: ["PromptRegistry", "StrictUndefined", "sha256", "JSON Schema"]
+    },
+    {
+      id: "route", name: "模型路由", module: "ModelRouter.build_chain", file: "app/services/router.py · app/config.py",
+      purpose: "把稳定的模型别名解析为可调用的 Provider 配置，并构造主模型到备用模型的候选链。",
+      input: "requested model alias + 能力要求 + 熔断状态。",
+      output: "有序 ModelEntry 列表，每项包含协议、真实模型、能力和价格。",
+      checks: ["只允许白名单模型，不能让调用方传任意 base_url", "fallback 必须能力等价，例如结构化输出不能退到 none", "每个模型独立熔断，open 状态不应继续打流量", "路由策略与价格属于配置，不应散落在 Agent Loop"],
+      decision: "先尝试哪个模型、哪些备用模型可以进入链；不执行网络请求。",
+      tags: ["alias", "whitelist", "fallback chain", "circuit breaker"]
+    },
+    {
+      id: "adapter", name: "Provider Adapter", module: "Provider.complete / stream", file: "app/services/upstream.py",
+      purpose: "把内部 messages、采样参数与结构化要求转换成供应商协议，再把供应商响应归一化。",
+      input: "ModelConfig、内部 Message、timeout、sampling、response_schema。",
+      output: "UpstreamResult 或 StreamChunk；供应商 SDK 对象不越过边界。",
+      checks: ["Chat Completions 与 Responses 的字段差异停在 Adapter", "SDK 内部 max_retries=0，避免和 Gateway 双重重试", "Provider Key 只从 Gateway 环境读取", "usage、finish_reason、cached_tokens 的缺省和末块位置要正确处理"],
+      decision: "如何翻译协议；不能决定业务 fallback、权限或修复次数。",
+      tags: ["protocol translation", "max_retries=0", "timeout", "normalized result"]
+    },
+    {
+      id: "control", name: "失败控制", module: "GatewayService.chat / _stream_events", file: "app/services/gateway.py · app/core/errors.py",
+      purpose: "对上游失败分类，在统一 deadline 内执行有限重试、fallback 或停止，并维护熔断状态。",
+      input: "成功结果或归一化 UpstreamError。",
+      output: "可用模型结果，或稳定 GatewayError / response.failed。",
+      checks: ["只有 timeout、network、rate_limited、overloaded 等瞬时错误才可重试", "重试必须同时受次数和总 deadline 限制", "流式首个内容块前可 fallback，首块后禁止透明切换", "认证、请求非法、配置错误不能靠原请求重试解决"],
+      decision: "同模型重试、切备用模型、计入熔断或立即失败。",
+      tags: ["error taxonomy", "bounded retry", "deadline", "first-token boundary"]
+    },
+    {
+      id: "validate", name: "出口校验与审计", module: "structured.py + usage.py", file: "app/services/structured.py · app/services/usage.py",
+      purpose: "结构化请求执行 JSON 提取与本地 Schema 校验；所有结果记录不含正文的 Trace，流式事件写入 checkpoint。",
+      input: "模型内容、Schema、Usage、attempts、latency、TTFT。",
+      output: "parsed 结果，或有限修复后的稳定错误；持久化 Trace/Event。",
+      checks: ["模型声称 JSON 合法不等于本地校验通过", "修复提示只携带安全的原回答、Schema 和校验问题", "修复次数有限，耗尽后停止", "Trace 默认不存 Prompt 与回答正文，避免隐私泄漏"],
+      decision: "接受结构化结果、构造一次修复上下文、或返回 schema 错误。",
+      tags: ["extract", "validate", "repair", "trace"]
+    },
+    {
+      id: "output", name: "统一输出", module: "ChatResponse / SSE events", file: "app/schemas.py · app/api/routes.py",
+      purpose: "向调用方交付稳定的非流式响应或类型化事件流，让上层不依赖供应商原始格式。",
+      input: "content/parsed 或 started/delta/completed/failed 事件。",
+      output: "本轮 ModelResponse；Agent 决定是否继续。",
+      checks: ["非流式保留 request_id、actual model、usage、attempts、finish_reason", "流式事件有 type、seq 与终态，心跳不是内容 Token", "response.completed 只表示本轮模型调用完成", "完整 Agent 协议还必须保留 tool_calls 与 tool_call_id"],
+      decision: "编码为 JSON 或 SSE；不能把本轮 completed 宣布成整个 Agent 任务完成。",
+      tags: ["ModelResponse", "SSE", "finish_reason", "model turn"]
+    }
+  ];
+
+  const scenarios = {
+    normal: {
+      title: "普通非流式请求",
+      summary: "一次成功的模型调用，经过统一入口、路由、Adapter、审计后返回。",
+      packets: {
+        input: ['HTTP REQUEST', `POST /v1/chat\nAuthorization: Bearer gw-chat-key\nContent-Type: application/json\n\n{\n  "model": "general-primary",\n  "messages": [\n    {"role": "user", "content": "用一句话解释 LLM Gateway"}\n  ],\n  "temperature": 0.2,\n  "max_tokens": 300\n}`],
+        api: ['CHAT REQUEST', `ChatRequest(\n  model="general-primary",\n  messages=[Message(role="user", content="…")],\n  response_schema=None,\n  stream=False,\n  temperature=0.2,\n  max_tokens=300\n)`],
+        guard: ['AUTH CONTEXT', `AuthContext(\n  key_id="dev-chat",\n  scopes=("chat",)\n)\n\nrate_limit: allowed\nremaining action: consume upstream capacity`],
+        prepare: ['PREPARED REQUEST', `messages = [\n  Message(role="user", content="用一句话解释 LLM Gateway")\n]\n\nrequire_structured = false`],
+        route: ['MODEL CHAIN', `[\n  ModelEntry(\n    name="general-primary",\n    protocol="chat_completions",\n    provider_model="deepseek-v4-flash"\n  ),\n  ModelEntry(name="general-backup", …)\n]`],
+        adapter: ['UPSTREAM REQUEST', `POST {provider_base_url}/chat/completions\n{\n  "model": "deepseek-v4-flash",\n  "messages": [{"role":"user","content":"…"}],\n  "temperature": 0.2,\n  "max_tokens": 300\n}\n\nSDK retries: 0`],
+        control: ['NORMALIZED RESULT', `UpstreamResult(\n  content="LLM Gateway 是统一管理模型访问的基础设施层。",\n  usage=Usage(input_tokens=18, output_tokens=15),\n  finish_reason="stop"\n)`],
+        validate: ['TRACE EVIDENCE', `CallTrace(\n  request_id="req_…",\n  requested_model="general-primary",\n  actual_model="general-primary",\n  attempts=1,\n  status="success",\n  input_tokens=18,\n  output_tokens=15,\n  latency_ms=842,\n  error_code=None\n)\n\n正文不进入 trace`],
+        output: ['HTTP 200 · CHAT RESPONSE', `{\n  "request_id": "req_…",\n  "model": "general-primary",\n  "content": "LLM Gateway 是统一管理模型访问的基础设施层。",\n  "parsed": null,\n  "usage": {"input_tokens":18,"output_tokens":15},\n  "latency_ms": 842,\n  "attempts": 1,\n  "finish_reason": "stop"\n}`]
+      }
+    },
+    structured: {
+      title: "结构化输出：校验失败后有限修复",
+      summary: "原回答与校验问题进入一次新模型轮次；修复耗尽后返回稳定错误，不无限循环。",
+      packets: {
+        input: ['HTTP REQUEST', `POST /v1/chat\nAuthorization: Bearer gw-chat-key\n\n{\n  "model": "general-primary",\n  "messages": [{"role":"user","content":"给出年龄"}],\n  "response_schema": {\n    "type":"object",\n    "properties":{"age":{"type":"integer"}},\n    "required":["age"],\n    "additionalProperties":false\n  }\n}`],
+        api: ['VALIDATED CONTRACT', `ChatRequest(\n  response_schema={…valid JSON Schema…},\n  stream=False\n)\n\n非法 Schema 在入口返回 400`],
+        guard: ['AUTH CONTEXT', `AuthContext(key_id="dev-chat", scopes=("chat",))\nrate_limit: allowed`],
+        prepare: ['STRUCTURED REQUIREMENT', `messages = [Message(role="user", content="给出年龄")]\nrequire_structured = true\n\n只有具备结构化能力的模型可进入候选链`],
+        route: ['CAPABILITY-FILTERED CHAIN', `[\n  general-primary (json_schema),\n  general-backup (json_object)\n]\n\nstructured_output_mode=none 的候选被过滤`],
+        adapter: ['UPSTREAM REQUEST', `response_format = {\n  "type":"json_schema",\n  "json_schema":{\n    "name":"gateway_response",\n    "strict":true,\n    "schema":{…}\n  }\n}`],
+        control: ['FIRST MODEL OUTPUT', `UpstreamResult(\n  content='{"age":"十八"}',\n  finish_reason="stop"\n)\n\n传输成功 ≠ 业务协议成功`],
+        validate: ['REPAIR LOOP', `local validation issue:\n  $.age: type — "十八" is not of type integer\n\nappend messages:\n  assistant: {"age":"十八"}\n  user: 保持原任务含义不变，只修正 JSON…\n\nrepair #1 result:\n  {"age": 18}\n\nlocal validation: PASS`],
+        output: ['HTTP 200 · PARSED RESPONSE', `{\n  "content": "{\\"age\\":18}",\n  "parsed": {"age":18},\n  "attempts": 2,\n  "finish_reason": "stop"\n}\n\n若 max_repairs 耗尽：\n502 schema_validation_failed`]
+      }
+    },
+    fallback: {
+      title: "网络失败：有限重试后 fallback",
+      summary: "传输类瞬时错误可在总预算内重试；主模型耗尽后切到能力等价的备用模型。",
+      packets: {
+        input: ['HTTP REQUEST', `POST /v1/chat\nAuthorization: Bearer gw-chat-key\n\n{\n  "model":"general-primary",\n  "messages":[{"role":"user","content":"生成摘要"}],\n  "timeout_seconds":10\n}`],
+        api: ['CHAT REQUEST', `protocol validation: PASS\nstream: false\ntimeout_seconds: 10`],
+        guard: ['AUTH CONTEXT', `API key: valid\nscope: chat\nrate limit: allowed`],
+        prepare: ['PREPARED REQUEST', `messages: normalized\nschema: none\nprompt template: none`],
+        route: ['FALLBACK CHAIN', `1. general-primary\n   breaker: closed\n2. general-backup\n   breaker: closed\n\n能力要求：普通文本`],
+        adapter: ['ATTEMPT #1', `provider.complete(general-primary)\n→ APIConnectionError\n\nnormalize:\nUpstreamError(code="network", retryable=true)`],
+        control: ['RETRY / FALLBACK', `general-primary attempt #1: network\n  → bounded backoff\ngeneral-primary attempt #2: timeout\n  → per-model attempts exhausted\n  → breaker.record_failure(primary)\n\ngeneral-backup attempt #3: success\n  → breaker.record_success(backup)`],
+        validate: ['TRACE EVIDENCE', `requested_model: general-primary\nactual_model: general-backup\nattempts: 3\nstatus: success\nlatency_ms: 2380\n\n注意：可能已经产生上游成本，即使没有对客户端输出`],
+        output: ['HTTP 200 · CHAT RESPONSE', `{\n  "model":"general-backup",\n  "content":"…",\n  "attempts":3,\n  "usage":{…}\n}`]
+      }
+    },
+    stream: {
+      title: "流式：首块输出后发生错误",
+      summary: "首个内容 delta 是不可逆边界；之后不能透明换模型，只能显式结束为 failed。",
+      packets: {
+        input: ['HTTP REQUEST', `POST /v1/chat/stream\nAccept: text/event-stream\nAuthorization: Bearer gw-chat-key\n\n{\n  "model":"general-primary",\n  "messages":[{"role":"user","content":"写一段说明"}],\n  "stream":true\n}`],
+        api: ['STREAM CONTRACT', `fail-fast before response headers:\n  model exists: yes\n  response_schema: none\n  prompt variables: valid\n\nHTTP 200 text/event-stream`],
+        guard: ['AUTH CONTEXT', `API key: valid\nscope: chat\nrate limit: allowed`],
+        prepare: ['PREPARED STREAM', `request_id = req_…\nmessages = […]\nchain = [primary, backup]\n\nemit response.started`],
+        route: ['MODEL CHAIN', `primary: breaker closed\nbackup: breaker closed\n\n首块前 primary 失败时可以进入 backup`],
+        adapter: ['STREAM CHUNKS', `StreamChunk(delta="LLM ")\nStreamChunk(delta="Gateway ")\n…then APIConnectionError\n\nusage may not arrive because stream ended abnormally`],
+        control: ['FIRST-TOKEN BOUNDARY', `emitted = true\nttft_ms captured\n\nnetwork error after visible delta:\n  ✗ do not retry primary\n  ✗ do not switch backup\n  ✓ record failed trace\n  ✓ emit response.failed`],
+        validate: ['EVENT CHECKPOINT', `id: 1  response.started\nid: 2  content.delta "LLM "\nid: 3  content.delta "Gateway "\nid: 4  response.failed network\n\n已持久化事件可按 Last-Event-ID 重放`],
+        output: ['SSE TERMINAL EVENT', `id: 4\ndata: {\n  "type":"response.failed",\n  "error_code":"network",\n  "message":"上游网络连接失败"\n}\n\n客户端必须把已有部分文本标记为不完整`]
+      }
+    },
+    tools: {
+      title: "未来扩展：完整 Tool Calling 透传",
+      summary: "Gateway 只传递工具协议；真实 handler、权限和 Tool Runtime 仍留在 Agent 一侧。",
+      packets: {
+        input: ['FUTURE AGENT REQUEST', `{\n  "model":"general-primary",\n  "messages":[\n    {"role":"user","content":"取消订单 123"}\n  ],\n  "tools":[{\n    "type":"function",\n    "function":{\n      "name":"cancel_order",\n      "description":"取消当前用户的订单",\n      "parameters":{\n        "type":"object",\n        "properties":{"order_id":{"type":"string"}},\n        "required":["order_id"]\n      }\n    }\n  }],\n  "tool_choice":"auto"\n}`],
+        api: ['REQUIRED CONTRACT EXTENSION', `ChatRequest must preserve:\n  tools[]\n  tool_choice\n  assistant.tool_calls[]\n  tool role messages\n  tool_call_id\n\n当前作业：尚未支持`],
+        guard: ['GATEWAY AUTH ONLY', `Gateway verifies caller key/scope.\n\nTool business authorization is NOT decided here.\nIt belongs to Agent Tool Runtime.`],
+        prepare: ['VISIBLE TOOL SNAPSHOT', `Gateway receives only model-visible schemas.\n\nNever include:\n  Python handler\n  database connection\n  user role / approval as model-owned fields`],
+        route: ['CAPABILITY ROUTING', `Only route to models/providers that support:\n  tool calling\n  parallel calls (if required)\n  streaming tool-call deltas (if required)\n\nFallback must preserve these capabilities.`],
+        adapter: ['TOOL PROTOCOL TRANSLATION', `Internal ToolDefinition\n  ↕\nOpenAI tools / tool_calls\n  ↕\nAnthropic tools / tool_use / tool_result\n\ncall IDs and JSON arguments must survive conversion.`],
+        control: ['MODEL TURN RESULT', `assistant.tool_calls = [{\n  "id":"call_123",\n  "name":"cancel_order",\n  "arguments":"{\\"order_id\\":\\"123\\"}"\n}]\n\nGateway returns it. Gateway does NOT execute it.`],
+        validate: ['AGENT TOOL RUNTIME', `outside Gateway:\n  validate input schema\n  inject trusted user/tenant context\n  authorize / approve\n  execute handler\n  validate output\n  build ToolResult(tool_call_id="call_123")`],
+        output: ['NEXT MODEL REQUEST', `{\n  "messages":[\n    {"role":"assistant","tool_calls":[…]},\n    {\n      "role":"tool",\n      "tool_call_id":"call_123",\n      "content":"{\\"status\\":\\"cancelled\\"}"\n    }\n  ]\n}\n\nAgent Loop calls Gateway again.`]
+      }
+    }
+  };
+
+  const pipeline = document.getElementById('pipeline');
+  const packet = document.getElementById('packet');
+  const packetLabel = document.getElementById('packet-label');
+  let scenarioKey = 'normal';
+  let stepIndex = 0;
+
+  baseStages.forEach((stage, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'stage';
+    button.dataset.index = String(index);
+    button.innerHTML = `<span class="num">${String(index + 1).padStart(2, '0')}</span><span class="name">${stage.name}</span><span class="module">${stage.module}</span>`;
+    button.addEventListener('click', () => selectStep(index));
+    pipeline.appendChild(button);
+  });
+
+  function selectStep(index) {
+    stepIndex = (index + baseStages.length) % baseStages.length;
+    const stage = baseStages[stepIndex];
+    const scenario = scenarios[scenarioKey];
+    document.querySelectorAll('.stage').forEach((el, i) => {
+      el.classList.toggle('active', i === stepIndex);
+      el.classList.toggle('future', scenarioKey === 'tools');
+    });
+    document.getElementById('step-number').textContent = `STEP ${String(stepIndex + 1).padStart(2, '0')}`;
+    document.getElementById('step-title').textContent = stage.name;
+    document.getElementById('step-file').textContent = stage.file;
+    document.getElementById('step-purpose').textContent = stage.purpose;
+    document.getElementById('step-input').textContent = stage.input;
+    document.getElementById('step-output').textContent = stage.output;
+    document.getElementById('step-decision').textContent = stage.decision;
+    document.getElementById('step-checks').innerHTML = stage.checks.map(item => `<li>${item}</li>`).join('');
+    document.getElementById('step-tags').innerHTML = stage.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+    const currentPacket = scenario.packets[stage.id];
+    packetLabel.textContent = currentPacket[0];
+    packet.textContent = currentPacket[1];
+  }
+
+  function selectScenario(key) {
+    scenarioKey = key;
+    const scenario = scenarios[key];
+    document.querySelectorAll('.scenario').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.scenario === key));
+    });
+    document.getElementById('scenario-title').textContent = scenario.title;
+    document.getElementById('scenario-summary').textContent = scenario.summary;
+    selectStep(0);
+  }
+
+  document.querySelectorAll('.scenario').forEach(button => {
+    button.addEventListener('click', () => selectScenario(button.dataset.scenario));
+  });
+  document.getElementById('prev').addEventListener('click', () => selectStep(stepIndex - 1));
+  document.getElementById('next').addEventListener('click', () => selectStep(stepIndex + 1));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') selectStep(stepIndex - 1);
+    if (event.key === 'ArrowRight') selectStep(stepIndex + 1);
+  });
+
+  selectScenario('normal');
+})();
+</script>
+</body>
+</html>

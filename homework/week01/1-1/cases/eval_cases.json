@@ -1,0 +1,36 @@
+[
+  {
+    "name": "sandbox-timeout",
+    "issue": "run_python_in_sandbox 会启动子进程执行用户代码，但目前没有超时保护，子进程可能永久卡死。请规划如何修复。",
+    "expect": {
+      "action": "edit",
+      "file_path_contains": ["sandbox_runner"],
+      "reason_contains": ["超时"],
+      "risk_in": ["low", "medium"]
+    },
+    "fake_responses": [
+      "{\"type\": \"tool_call\", \"name\": \"read_file\", \"arguments\": {\"path\": \"sandbox_runner.py\"}}",
+      "{\"action\": \"edit\", \"file_path\": \"sandbox_runner.py\", \"reason\": \"run_python_in_sandbox 用子进程执行用户代码但缺少超时保护，子进程一旦挂起整个评测就会被卡死。计划给子进程调用加 timeout 参数，超时后终止进程并返回明确的超时错误，保证流程可持续。\", \"risk\": \"low\"}"
+    ]
+  },
+  {
+    "name": "vague-request",
+    "issue": "帮我优化一下这个项目。",
+    "expect": {
+      "action": "ask_user"
+    },
+    "fake_responses": [
+      "{\"action\": \"ask_user\", \"file_path\": null, \"reason\": \"「优化一下这个项目」没有说明目标：是性能、可读性还是测试覆盖？不同目标的改动范围差别很大，需要先明确期望与约束，才能给出可校验的修改计划。\", \"risk\": \"low\"}"
+    ]
+  },
+  {
+    "name": "no-change-needed",
+    "issue": "请核对 eval_cases.json 的用例字段与 eval_runner.py 的判定逻辑是否兼容，给出结论即可；如果兼容就不要提出任何修改。",
+    "expect": {
+      "action": "finish"
+    },
+    "fake_responses": [
+      "{\"action\": \"finish\", \"file_path\": null, \"reason\": \"核对后确认 eval_cases.json 的字段（input、expect_tool、expect_arguments、expect_answer_contains）与 eval_runner.py 的判定逻辑一一对应，格式兼容，无需修改代码。\", \"risk\": \"low\"}"
+    ]
+  }
+]
