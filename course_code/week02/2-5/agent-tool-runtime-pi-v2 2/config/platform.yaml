@@ -1,0 +1,67 @@
+gateway:
+  base_url: http://127.0.0.1:8000/v1
+  api_key_env: GATEWAY_API_KEY
+  prompt_name: agent.default
+  prompt_version: v2
+
+model:
+  provider_id: phase-gateway
+  id: agent-default
+  name: DeepSeek via Phase-One Gateway
+  context_window: 1000000
+  max_tokens: 4096
+  # 使用峰值价格作为预算上限，单位：美元 / 1M Token。
+  input_per_million: 0.44
+  output_per_million: 1.32
+  cache_read_per_million: 0.014
+
+runtime:
+  database: ../data/platform.db
+  max_turns: 8
+  max_tool_calls: 12
+  max_repeated_call: 2
+  max_total_tokens: 30000
+  max_cost_usd: 0.25
+  max_duration_ms: 120000
+
+approval_api:
+  host: 127.0.0.1
+  port: 8787
+  api_key_env: APPROVAL_API_KEY
+
+policy:
+  role_permissions:
+    support:
+      - order:read
+      - knowledge:read
+    supervisor:
+      - order:read
+      - knowledge:read
+      - ticket:create
+      - coffee:order
+  agent_tool_allowlist:
+    support-agent:
+      - order.get_status
+      - ticket.create
+      - mcp.my-coffee.*
+  resource_tenant_prefixes:
+    tenant_a:
+      - ORD-A-
+    tenant_b:
+      - ORD-B-
+
+tools:
+  order_service_url: http://127.0.0.1:8000/internal/tools/order.get_status
+  order_schema: schemas/order.get_status.json
+
+mcp_servers:
+  - id: my-coffee
+    type: streamablehttp
+    url: https://gwmcp.lkcoffee.com/order/user/mcp
+    headers:
+      Authorization: Bearer ${LUCKIN_MCP_TOKEN}
+    trust: trusted
+    # 无 Token 时无法预先判定远端各工具的副作用，按最保守策略处理。
+    default_risk: high
+    permissions:
+      - coffee:order

@@ -1,0 +1,582 @@
+{
+  "version": 2,
+  "nodes": [
+    {
+      "type": "frame",
+      "id": "root",
+      "x": 0,
+      "y": 0,
+      "width": 1400,
+      "height": "fit-content",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 28,
+      "fillColor": "#FFFFFF",
+      "borderColor": "#FFFFFF",
+      "borderWidth": 2,
+      "children": [
+        {
+          "type": "text",
+          "id": "title",
+          "width": "fill-container",
+          "height": "fit-content",
+          "text": "Agent Tool Runtime PI v2｜主要运行流程架构图",
+          "fontSize": 28,
+          "textColor": "#1F2329",
+          "textAlign": "center",
+          "verticalAlign": "middle"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "width": "fill-container",
+          "height": "fit-content",
+          "text": "请求进入 Agent 循环；模型与工具均经受控边界访问；高风险操作进入审批闭环。实线为主调用，虚线为观测与持久化。",
+          "fontSize": 14,
+          "textColor": "#1F2329",
+          "textAlign": "center",
+          "verticalAlign": "middle"
+        },
+        {
+          "type": "frame",
+          "id": "entry-row",
+          "width": "fill-container",
+          "height": "fit-content",
+          "layout": "horizontal",
+          "gap": 24,
+          "padding": 0,
+          "alignItems": "stretch",
+          "children": [
+            {
+              "type": "text",
+              "width": 118,
+              "height": "fit-content",
+              "text": "调用入口",
+              "fontSize": 18,
+              "textColor": "#1F2329",
+              "textAlign": "right",
+              "verticalAlign": "middle"
+            },
+            {
+              "type": "frame",
+              "id": "entry-layer",
+              "width": "fill-container",
+              "height": "fit-content",
+              "layout": "horizontal",
+              "gap": 40,
+              "padding": 20,
+              "alignItems": "stretch",
+              "fillColor": "#F0F4FC",
+              "borderColor": "#5178C6",
+              "borderWidth": 2,
+              "borderRadius": 8,
+              "children": [
+                {
+                  "type": "rect",
+                  "id": "user",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "用户 / 审批人\n提交任务、查看审批、取得结果",
+                  "fontSize": 15,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#5178C6",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                },
+                {
+                  "type": "rect",
+                  "id": "cli",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "Runtime CLI / pi Coding Agent\nagent、invoke、审批与审计命令",
+                  "fontSize": 15,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#5178C6",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "runtime-row",
+          "width": "fill-container",
+          "height": "fit-content",
+          "layout": "horizontal",
+          "gap": 24,
+          "padding": 0,
+          "alignItems": "stretch",
+          "children": [
+            {
+              "type": "text",
+              "width": 118,
+              "height": "fit-content",
+              "text": "Node Runtime",
+              "fontSize": 18,
+              "textColor": "#1F2329",
+              "textAlign": "right",
+              "verticalAlign": "middle"
+            },
+            {
+              "type": "frame",
+              "id": "runtime-layer",
+              "width": "fill-container",
+              "height": "fit-content",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 20,
+              "fillColor": "#EAE2FE",
+              "borderColor": "#8569CB",
+              "borderWidth": 2,
+              "borderRadius": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "layout": "horizontal",
+                  "gap": 40,
+                  "padding": 0,
+                  "alignItems": "stretch",
+                  "children": [
+                    {
+                      "type": "rect",
+                      "id": "platform",
+                      "width": "fill-container",
+                      "height": "fit-content",
+                      "text": "Platform 装配层\n加载配置，注册本地 / MCP 工具\n初始化 Store、Policy、Registry、Runtime",
+                      "fontSize": 14,
+                      "textColor": "#1F2329",
+                      "textAlign": "center",
+                      "verticalAlign": "middle",
+                      "fillColor": "#FFFFFF",
+                      "borderColor": "#8569CB",
+                      "borderWidth": 2,
+                      "borderRadius": 8
+                    },
+                    {
+                      "type": "rect",
+                      "id": "agent-runner",
+                      "width": "fill-container",
+                      "height": "fit-content",
+                      "text": "pi Agent Runner + Loop Guard\n创建执行上下文、Prompt 与工具快照\n限制回合、工具次数、Token、成本与时长",
+                      "fontSize": 14,
+                      "textColor": "#1F2329",
+                      "textAlign": "center",
+                      "verticalAlign": "middle",
+                      "fillColor": "#FFFFFF",
+                      "borderColor": "#8569CB",
+                      "borderWidth": 2,
+                      "borderRadius": 8
+                    },
+                    {
+                      "type": "rect",
+                      "id": "tool-runtime",
+                      "width": "fill-container",
+                      "height": "fit-content",
+                      "text": "Tool Runtime\nSchema 校验 → 策略 → 审批 → 重试\n统一审计、Trace 与受治理的工具执行",
+                      "fontSize": 14,
+                      "textColor": "#1F2329",
+                      "textAlign": "center",
+                      "verticalAlign": "middle",
+                      "fillColor": "#FFFFFF",
+                      "borderColor": "#8569CB",
+                      "borderWidth": 2,
+                      "borderRadius": 8
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "layout": "horizontal",
+                  "gap": 40,
+                  "padding": 0,
+                  "alignItems": "stretch",
+                  "children": [
+                    {
+                      "type": "rect",
+                      "id": "policy-registry",
+                      "width": "fill-container",
+                      "height": "fit-content",
+                      "text": "Policy Engine + Tool Registry\nRBAC、租户边界、执行模式、风险分级\n将内部工具名映射为模型可见工具",
+                      "fontSize": 14,
+                      "textColor": "#1F2329",
+                      "textAlign": "center",
+                      "verticalAlign": "middle",
+                      "fillColor": "#FFFFFF",
+                      "borderColor": "#8569CB",
+                      "borderWidth": 2,
+                      "borderRadius": 8
+                    },
+                    {
+                      "type": "rect",
+                      "id": "approval-api",
+                      "width": "fill-container",
+                      "height": "fit-content",
+                      "text": "Approval API\n查询、批准 / 拒绝，执行已批准调用\n参数或上下文变化时审批失效",
+                      "fontSize": 14,
+                      "textColor": "#1F2329",
+                      "textAlign": "center",
+                      "verticalAlign": "middle",
+                      "fillColor": "#FFFFFF",
+                      "borderColor": "#8569CB",
+                      "borderWidth": 2,
+                      "borderRadius": 8
+                    },
+                    {
+                      "type": "cylinder",
+                      "id": "platform-store",
+                      "width": 230,
+                      "height": "fit-content",
+                      "text": "Platform SQLite\n审批 / 审计 / Trace / 工单",
+                      "fontSize": 14,
+                      "textColor": "#1F2329",
+                      "textAlign": "center",
+                      "verticalAlign": "middle",
+                      "fillColor": "#FFFFFF",
+                      "borderColor": "#8569CB",
+                      "borderWidth": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "gateway-row",
+          "width": "fill-container",
+          "height": "fit-content",
+          "layout": "horizontal",
+          "gap": 24,
+          "padding": 0,
+          "alignItems": "stretch",
+          "children": [
+            {
+              "type": "text",
+              "width": 118,
+              "height": "fit-content",
+              "text": "Python Gateway",
+              "fontSize": 18,
+              "textColor": "#1F2329",
+              "textAlign": "right",
+              "verticalAlign": "middle"
+            },
+            {
+              "type": "frame",
+              "id": "gateway-layer",
+              "width": "fill-container",
+              "height": "fit-content",
+              "layout": "horizontal",
+              "gap": 40,
+              "padding": 20,
+              "alignItems": "stretch",
+              "fillColor": "#DFF5E5",
+              "borderColor": "#509863",
+              "borderWidth": 2,
+              "borderRadius": 8,
+              "children": [
+                {
+                  "type": "rect",
+                  "id": "gateway",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "FastAPI + LiteLLM Gateway\n鉴权、限流、模型路由、重试与故障切换\n/v1/chat/completions 与 Prompt Render",
+                  "fontSize": 14,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#509863",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                },
+                {
+                  "type": "rect",
+                  "id": "deepseek",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "DeepSeek LLM Provider\nGateway 按模型别名路由\n返回文本或 Tool Call",
+                  "fontSize": 14,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#509863",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                },
+                {
+                  "type": "cylinder",
+                  "id": "gateway-db",
+                  "width": 230,
+                  "height": "fit-content",
+                  "text": "Gateway SQLite\nToken / 成本 / 时延 / 错误账本",
+                  "fontSize": 14,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#509863",
+                  "borderWidth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tool-row",
+          "width": "fill-container",
+          "height": "fit-content",
+          "layout": "horizontal",
+          "gap": 24,
+          "padding": 0,
+          "alignItems": "stretch",
+          "children": [
+            {
+              "type": "text",
+              "width": 118,
+              "height": "fit-content",
+              "text": "受控工具边界",
+              "fontSize": 18,
+              "textColor": "#1F2329",
+              "textAlign": "right",
+              "verticalAlign": "middle"
+            },
+            {
+              "type": "frame",
+              "id": "tool-layer",
+              "width": "fill-container",
+              "height": "fit-content",
+              "layout": "horizontal",
+              "gap": 40,
+              "padding": 20,
+              "alignItems": "stretch",
+              "fillColor": "#FEF1CE",
+              "borderColor": "#D4B45B",
+              "borderWidth": 2,
+              "borderRadius": 8,
+              "children": [
+                {
+                  "type": "rect",
+                  "id": "order-tool",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "订单查询工具\n转发租户、用户与 Trace Headers\n调用 Gateway 内部订单接口",
+                  "fontSize": 14,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#D4B45B",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                },
+                {
+                  "type": "rect",
+                  "id": "mcp-adapter",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "MCP Adapter\n受信任的 Streamable HTTP 连接\n工具发现与远程工具调用",
+                  "fontSize": 14,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#D4B45B",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                },
+                {
+                  "type": "rect",
+                  "id": "business-services",
+                  "width": "fill-container",
+                  "height": "fit-content",
+                  "text": "业务服务\n内部订单服务 / my-coffee MCP\n返回业务结果给 Agent 循环",
+                  "fontSize": 14,
+                  "textColor": "#1F2329",
+                  "textAlign": "center",
+                  "verticalAlign": "middle",
+                  "fillColor": "#FFFFFF",
+                  "borderColor": "#D4B45B",
+                  "borderWidth": 2,
+                  "borderRadius": 8
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "user",
+        "to": "cli",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "任务 / 审批"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "cli",
+        "to": "agent-runner",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "构建平台并运行"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "agent-runner",
+        "to": "gateway",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "Prompt + OpenAI 兼容模型请求"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "gateway",
+        "to": "deepseek",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "LiteLLM 路由"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "agent-runner",
+        "to": "tool-runtime",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "Tool Call"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "tool-runtime",
+        "to": "order-tool",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "allow"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "tool-runtime",
+        "to": "mcp-adapter",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow",
+        "label": "allow"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "order-tool",
+        "to": "business-services",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "mcp-adapter",
+        "to": "business-services",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "endArrow": "arrow"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "tool-runtime",
+        "to": "approval-api",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "lineStyle": "dashed",
+        "endArrow": "arrow",
+        "label": "confirm：创建待审批请求"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "approval-api",
+        "to": "tool-runtime",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "lineStyle": "dashed",
+        "endArrow": "arrow",
+        "label": "批准后绑定参数执行"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "tool-runtime",
+        "to": "platform-store",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "lineStyle": "dashed",
+        "endArrow": "arrow",
+        "label": "审计 / Trace / 审批"
+      }
+    },
+    {
+      "type": "connector",
+      "connector": {
+        "from": "gateway",
+        "to": "gateway-db",
+        "lineShape": "polyline",
+        "lineColor": "#BBBFC4",
+        "lineWidth": 2,
+        "lineStyle": "dashed",
+        "endArrow": "arrow",
+        "label": "用量账本"
+      }
+    }
+  ]
+}

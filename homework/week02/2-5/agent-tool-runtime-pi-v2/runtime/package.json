@@ -1,0 +1,35 @@
+{
+  "name": "agent-tool-runtime-pi-v2",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run tests/unit",
+    "test:mcp": "vitest run tests/integration/mcp.test.ts",
+    "test:live": "node scripts/run-live-tests.mjs",
+    "test:mcp:live": "node --import tsx scripts/check-live-mcp.ts",
+    "cli": "node --import tsx src/cli.ts",
+    "approval-api": "node --import tsx src/approval-server.ts",
+    "mcp:demo": "node --import tsx src/mcp/demo-server.ts",
+    "pi:managed": "pi -e ./src/pi/coding-agent-extension.ts"
+  },
+  "dependencies": {
+    "@earendil-works/pi-agent-core": "^0.84.4",
+    "@earendil-works/pi-ai": "^0.84.4",
+    "@earendil-works/pi-coding-agent": "^0.84.4",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "commander": "14.0.0",
+    "typebox": "1.3.7",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.12.4",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  }
+}

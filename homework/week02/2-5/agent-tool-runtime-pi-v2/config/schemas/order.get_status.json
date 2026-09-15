@@ -1,0 +1,16 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "order_id": {
+      "pattern": "^ORD-[A-Z]-[0-9]{4,12}$",
+      "title": "Order Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "order_id"
+  ],
+  "title": "OrderStatusInput",
+  "type": "object"
+}
+
