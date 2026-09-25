@@ -1,6 +1,6 @@
 ex_ctx/*
 .DS_Store
-docs/
+/docs/
 .zcode/
 
 # llm-gateway
@@ -11,3 +11,4 @@ __pycache__/
 *.egg-info/
 node_modules/
 .venv/
+dist/
