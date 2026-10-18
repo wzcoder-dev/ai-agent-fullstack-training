@@ -1,0 +1,239 @@
+{
+  "generated_at": "2026-10-18T11:30:11.422653+08:00",
+  "checks": [
+    {
+      "id": "M01",
+      "title": "创建修复示例",
+      "passed": true,
+      "evidence": "repair/checkpoint-paused.json"
+    },
+    {
+      "id": "M02",
+      "title": "运行到审批",
+      "passed": true,
+      "evidence": "repair/checkpoint-paused.json"
+    },
+    {
+      "id": "M03",
+      "title": "确认尚未写入",
+      "passed": true,
+      "evidence": "repair/checkpoint-paused.json"
+    },
+    {
+      "id": "M04",
+      "title": "批准精确的调用",
+      "passed": true,
+      "evidence": "repair/checkpoint-approved.json"
+    },
+    {
+      "id": "M05",
+      "title": "新进程恢复完成",
+      "passed": true,
+      "evidence": "repair/checkpoint.json"
+    },
+    {
+      "id": "M06",
+      "title": "核对真实交付和单次写入",
+      "passed": true,
+      "evidence": "repair/audit.jsonl"
+    },
+    {
+      "id": "M07",
+      "title": "直接复跑目标仓库测试",
+      "passed": true,
+      "evidence": "repair/standalone-test.json"
+    },
+    {
+      "id": "M08",
+      "title": "创建理解任务",
+      "passed": true,
+      "evidence": "understand/checkpoint-paused.json"
+    },
+    {
+      "id": "M09",
+      "title": "批准报告并恢复",
+      "passed": true,
+      "evidence": "understand/report.md"
+    },
+    {
+      "id": "M10",
+      "title": "拒绝审批",
+      "passed": true,
+      "evidence": "deny/checkpoint.json"
+    },
+    {
+      "id": "M11",
+      "title": "工作区变化后停止",
+      "passed": true,
+      "evidence": "changed/inspection-final.json"
+    },
+    {
+      "id": "M12",
+      "title": "写入后崩溃恢复",
+      "passed": true,
+      "evidence": "unknown/inspection-final.json"
+    },
+    {
+      "id": "G1",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-G1.json"
+    },
+    {
+      "id": "G2",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-G2.json"
+    },
+    {
+      "id": "G3",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-G3.json"
+    },
+    {
+      "id": "G4",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-G4.json"
+    },
+    {
+      "id": "S1",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-S1.json"
+    },
+    {
+      "id": "S2",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-S2.json"
+    },
+    {
+      "id": "S3",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-S3.json"
+    },
+    {
+      "id": "S4",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-S4.json"
+    },
+    {
+      "id": "C1",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-C1.json"
+    },
+    {
+      "id": "C2",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-C2.json"
+    },
+    {
+      "id": "C3",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-C3.json"
+    },
+    {
+      "id": "C4",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-C4.json"
+    },
+    {
+      "id": "A1",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-A1.json"
+    },
+    {
+      "id": "A2",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-A2.json"
+    },
+    {
+      "id": "H1",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-H1.json"
+    },
+    {
+      "id": "H2",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-H2.json"
+    },
+    {
+      "id": "H3",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-H3.json"
+    },
+    {
+      "id": "R1",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-R1.json"
+    },
+    {
+      "id": "R2",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-R2.json"
+    },
+    {
+      "id": "R3",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-R3.json"
+    },
+    {
+      "id": "R4",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-R4.json"
+    },
+    {
+      "id": "R5",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-R5.json"
+    },
+    {
+      "id": "R6",
+      "title": "独立运行对应验收用例",
+      "passed": true,
+      "evidence": "check-R6.json"
+    },
+    {
+      "id": "T1",
+      "title": "完整确定性测试集",
+      "passed": true,
+      "evidence": "pytest.txt"
+    },
+    {
+      "id": "T2",
+      "title": "当前源码的 DeepSeek 真实模型验收",
+      "passed": true,
+      "evidence": "artifacts/deepseek-20261018-112821/summary.json"
+    },
+    {
+      "id": "M13",
+      "title": "重新生成证据与 HTML",
+      "passed": true,
+      "evidence": "guide-build.json"
+    }
+  ],
+  "total": 38,
+  "passed": 38,
+  "suite_command": [
+    "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+    "scripts/verify.py"
+  ]
+}

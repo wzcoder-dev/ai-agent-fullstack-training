@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-10-18T11:06:23.553043+08:00",
+  "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+  "scenarios": {
+    "repair": {
+      "status": "COMPLETED",
+      "stop_reason": "VERIFIED",
+      "steps": 6,
+      "calls": 6,
+      "run_id": "b3a40f385e3b4497a9b1d6d5cb8dcab4"
+    },
+    "understand": {
+      "status": "COMPLETED",
+      "stop_reason": "VERIFIED",
+      "steps": 4,
+      "calls": 4,
+      "run_id": "8cb10b2dc89c48e8ae2a77e5e4bbf109"
+    },
+    "unknown": {
+      "status": "UNKNOWN_RESULT",
+      "stop_reason": "UNKNOWN_RESULT",
+      "steps": 4,
+      "calls": 4,
+      "run_id": "cf25d2a18e5a403f9b3c5b175613d377"
+    },
+    "changed": {
+      "status": "NEEDS_REVIEW",
+      "stop_reason": "WORKSPACE_CHANGED",
+      "steps": 4,
+      "calls": 4,
+      "run_id": "68db708fc1e5491f816681600d0f74f3"
+    }
+  },
+  "real_model_executed": false,
+  "evidence_dir": "artifacts/20261018-110617",
+  "source_sha256": {
+    ".python-version": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d",
+    "guarded_harness/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "guarded_harness/audit.py": "946f782801f6e3278f86c5acba664ee0575ab085625200f0d44579372b7a3b41",
+    "guarded_harness/checkpoint.py": "452332d00c12965d1b28f26a08dc92c15aa20de378e533da8ab8ba26f20c8e3c",
+    "guarded_harness/cli.py": "24af3756106976a0d6ee8e236952a1cffb7615ee2c864e5ff11b8dc8f6bccd14",
+    "guarded_harness/demo.py": "759d2533c66cf82ffd1f9377517723fcca2c08429e066a999c8786aecd4db638",
+    "guarded_harness/gate.py": "1768cdaa4c2eae9e48125bb8e52439f6caaf59d91dd58a9c97a6b2b60632f6b4",
+    "guarded_harness/harness.py": "d2c061d8b0c68ef10833ba0961d360dcefadb47de124a014228c3e1de9ffd50f",
+    "guarded_harness/models.py": "1c192b426e1ea6c5abb4024fafdfb84b7c19977667debb378b0f8c6ff1d8eb1e",
+    "guarded_harness/sandbox.py": "6febffd8f977c91f7f4325865531f74900b95075757f2f71382ebfc50b3234e1",
+    "guarded_harness/state_store.py": "ac8301dec01f14fe7fa54a7b47da2c428e4d54faf9403468b7c874a1a892d5c9",
+    "pyproject.toml": "4418a2dfe032388121059767f7f74a683fe03865634ae79af7de0d9089c5d80d",
+    "scripts/build_guide.py": "fd89ba32c146ddd9aec7855ebb0015f282832a8385ba3cc350961f7c93c92bb8",
+    "scripts/crash_demo.py": "822a4992e4316504e454fd2ee197492ce00615fa82926c7d92d42e6578d06217",
+    "scripts/verify.py": "521088ec70bc12f485f06b8a765932a6b246fa1b8506d2e5353c97212b2baad4",
+    "scripts/verify_deepseek.py": "3bcca580463ce67aca58388111991628209193d739bc1eaef40c2997582f6a74",
+    "tests/conftest.py": "694e11705f836e73e2aea9999d756fd48e729d1806f82c556c4c46054d3a8cf3",
+    "tests/test_audit.py": "4c99cc81ebf2f180c7f635db01980892c4a8e3ab19b774f12282188a71c14580",
+    "tests/test_completion.py": "8092a21725c391f3aa2ee5d4c727ecc29b206952a9a6e62443dc1d89cbdcc1fd",
+    "tests/test_gate.py": "aa1ae03dd70aedc4df9720e9e605e339f927b7ade418a779f89b99a88b3c9c28",
+    "tests/test_harness_loop.py": "2e108f44c6b986bf3edc45f3305d1a09747771608298c708087a20c0679e40ef",
+    "tests/test_sandbox.py": "b2e4c29674e7214615319941beeb2a32a2f3f5209b034deb3467f251b0c9389f",
+    "tests/test_state_checkpoint.py": "2883bd433896bae2d8d96a551158bb1853ce21616a1024d8383dcb859a5aa546",
+    "uv.lock": "9649a63e83d4038d759e7f227369be9c178a46aa77769d0a7bb5f64f7c4dc452"
+  }
+}

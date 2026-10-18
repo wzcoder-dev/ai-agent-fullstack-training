@@ -1,0 +1,20 @@
+{
+  "valid": true,
+  "can_resume": false,
+  "can_approve": false,
+  "code": "RUN_TERMINAL",
+  "notes": [
+    "运行已处于 NEEDS_REVIEW，不会重启模型；核对后另建新 run。"
+  ],
+  "changed_files": [
+    {
+      "path": "calc.py",
+      "change": "modified",
+      "before": "d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62",
+      "after": "2246f398c5a03c9ce8aaad5eff6c2bc721786876d62472c57589a5884c08bb05"
+    }
+  ],
+  "unresolved": [],
+  "state": "NEEDS_REVIEW",
+  "run_id": "22a3dec2a4144895b73b6ffee5f1e359"
+}

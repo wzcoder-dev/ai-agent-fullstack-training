@@ -1,0 +1,468 @@
+[
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/artifacts/20261018-184638/pytest.xml"
+    ],
+    "returncode": 0,
+    "stdout": "........................................................................ [ 82%]\n...............                                                          [100%]\n87 passed in 4.29s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "init-demo",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo"
+    ],
+    "returncode": 0,
+    "stdout": "示例工作区已创建： /Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "run",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/state",
+      "--kind",
+      "repair"
+    ],
+    "returncode": 0,
+    "stdout": "待审批 Diff：\n--- calc.py\n+++ calc.py\n@@ -1,3 +1,3 @@\n def add(a, b):\n     \"\"\"返回两数之和。\"\"\"\n-    return a - b\n+    return a + b\n\n{\n  \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\",\n  \"status\": \"WAITING_APPROVAL\",\n  \"stop_reason\": null,\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": {\n    \"id\": \"call-4\",\n    \"tool\": \"write_file\",\n    \"args\": {\n      \"path\": \"calc.py\",\n      \"content\": \"def add(a, b):\\n    \\\"\\\"\\\"返回两数之和。\\\"\\\"\\\"\\n    return a + b\\n\"\n    },\n    \"signature\": \"e492ebe549748213e0e2ffd9f22b1edd91931af2d677a1da6120a8bab8ce5e83\",\n    \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\"\n  },\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.118779,\n  \"resume_inspection\": null,\n  \"missing\": [\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"LATEST_TEST_NOT_PASSED\",\n      \"message\": \"最后一次测试未通过或结果未知：1；必须重新测试。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：pending\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": true,\n  \"code\": \"WAITING_APPROVAL\",\n  \"notes\": [\n    \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"WAITING_APPROVAL\",\n  \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "approve",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/state",
+      "--call-id",
+      "call-4",
+      "--actor",
+      "verification-script"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\",\n  \"status\": \"RUNNING\",\n  \"stop_reason\": null,\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": null,\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    },\n    {\n      \"id\": \"ev-4\",\n      \"kind\": \"write\",\n      \"path\": \"calc.py\",\n      \"sha256\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\",\n      \"revision\": \"75599f3b398b3c4e8f8728ca2cf908436aa0097312ba9d5576714830288d7802\",\n      \"call_id\": \"call-4\",\n      \"step_id\": \"change\"\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-4\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": \"源码变化，需重新验证\"\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": \"源码变化，需重新验证\"\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_GRANTED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.121716,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": false,\n    \"can_approve\": true,\n    \"code\": \"WAITING_APPROVAL\",\n    \"notes\": [\n      \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"WAITING_APPROVAL\",\n    \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\"\n  },\n  \"missing\": [\n    {\n      \"code\": \"STALE_TEST\",\n      \"message\": \"最新测试不属于当前源码版本，请重新运行 run_test。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "resume",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\",\n  \"status\": \"COMPLETED\",\n  \"stop_reason\": \"VERIFIED\",\n  \"steps\": 6,\n  \"calls\": 6,\n  \"pending\": null,\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    },\n    {\n      \"id\": \"ev-4\",\n      \"kind\": \"write\",\n      \"path\": \"calc.py\",\n      \"sha256\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\",\n      \"revision\": \"75599f3b398b3c4e8f8728ca2cf908436aa0097312ba9d5576714830288d7802\",\n      \"call_id\": \"call-4\",\n      \"step_id\": \"change\"\n    },\n    {\n      \"id\": \"ev-5\",\n      \"kind\": \"test\",\n      \"revision\": \"75599f3b398b3c4e8f8728ca2cf908436aa0097312ba9d5576714830288d7802\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-5\",\n      \"step_id\": \"verify\",\n      \"returncode\": 0,\n      \"reason\": null,\n      \"output\": \".                                                                        [100%]\\n1 passed in 0.00s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-4\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-5\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_GRANTED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 4,\n      \"event\": \"RESUME\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 5,\n      \"event\": \"COMPLETION_ACCEPTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"COMPLETED\",\n      \"reason\": \"VERIFIED\"\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.224561,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": true,\n    \"can_approve\": false,\n    \"code\": \"READY\",\n    \"notes\": [\n      \"结构、校验和、工作区和调用账本检查通过，可以恢复。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"RUNNING\",\n    \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\"\n  },\n  \"missing\": []\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": false,\n  \"code\": \"RUN_TERMINAL\",\n  \"notes\": [\n    \"运行已处于 COMPLETED，不会重启模型；核对后另建新 run。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"COMPLETED\",\n  \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-c",
+      "import json; from pathlib import Path; from guarded_harness.sandbox import Sandbox; print(json.dumps(Sandbox(Path('/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo')).run_test()))"
+    ],
+    "returncode": 0,
+    "stdout": "{\"returncode\": 0, \"reason\": null, \"output\": \".                                                                        [100%]\\n1 passed in 0.00s\\n\", \"truncated\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "status",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"version\": 2,\n  \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\",\n  \"root\": \"/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/repair/repo\",\n  \"kind\": \"repair\",\n  \"status\": \"COMPLETED\",\n  \"stop_reason\": \"VERIFIED\",\n  \"steps\": 6,\n  \"calls\": 6,\n  \"max_steps\": 16,\n  \"call_budget\": 24,\n  \"tokens_used\": 0,\n  \"max_total_tokens\": 50000,\n  \"elapsed_seconds\": 0.224561,\n  \"max_duration_seconds\": 300,\n  \"context_max_chars\": 24000,\n  \"keep_recent\": 2,\n  \"context_stats\": [\n    {\n      \"applied\": false,\n      \"chars_before\": 5257,\n      \"chars_after\": 5257,\n      \"summarized_steps\": 0,\n      \"kept_steps\": 0,\n      \"rendered_hash\": \"d128dddb25486fa3151366123a7009d5ad0a3615eb10efc9300a6ed3925ef051\",\n      \"step\": 1\n    },\n    {\n      \"applied\": false,\n      \"chars_before\": 5758,\n      \"chars_after\": 5758,\n      \"summarized_steps\": 0,\n      \"kept_steps\": 1,\n      \"rendered_hash\": \"becad53de9a97fd09418a53a9c32bdc95f160a59575fbbfb16e959b961c9805f\",\n      \"step\": 2\n    },\n    {\n      \"applied\": false,\n      \"chars_before\": 6280,\n      \"chars_after\": 6280,\n      \"summarized_steps\": 0,\n      \"kept_steps\": 2,\n      \"rendered_hash\": \"c1ec13148e5ad3f56102a6ee3f23747afc679dfcaa4572ea71bae4dc2e57033f\",\n      \"step\": 3\n    },\n    {\n      \"applied\": false,\n      \"chars_before\": 7323,\n      \"chars_after\": 7323,\n      \"summarized_steps\": 0,\n      \"kept_steps\": 3,\n      \"rendered_hash\": \"2ab5dc04f51299700b1b46bc965c2ea61f05562d8234bbaceb9cc20954130075\",\n      \"step\": 4\n    },\n    {\n      \"applied\": false,\n      \"chars_before\": 7435,\n      \"chars_after\": 7435,\n      \"summarized_steps\": 0,\n      \"kept_steps\": 0,\n      \"rendered_hash\": \"6b02cb31f421d035f823cf5bd36ee4af2cab41b498db102dfd4f42a43075c3f5\",\n      \"step\": 5\n    },\n    {\n      \"applied\": false,\n      \"chars_before\": 8015,\n      \"chars_after\": 8015,\n      \"summarized_steps\": 0,\n      \"kept_steps\": 1,\n      \"rendered_hash\": \"9b4454bccbd20cce0442b0156f766e22b5382b6345f76f403feda0624f8b7234\",\n      \"step\": 6\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-4\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-5\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    },\n    {\n      \"id\": \"ev-4\",\n      \"kind\": \"write\",\n      \"path\": \"calc.py\",\n      \"sha256\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\",\n      \"revision\": \"75599f3b398b3c4e8f8728ca2cf908436aa0097312ba9d5576714830288d7802\",\n      \"call_id\": \"call-4\",\n      \"step_id\": \"change\"\n    },\n    {\n      \"id\": \"ev-5\",\n      \"kind\": \"test\",\n      \"revision\": \"75599f3b398b3c4e8f8728ca2cf908436aa0097312ba9d5576714830288d7802\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-5\",\n      \"step_id\": \"verify\",\n      \"returncode\": 0,\n      \"reason\": null,\n      \"output\": \".                                                                        [100%]\\n1 passed in 0.00s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"evidence_sequence\": 5,\n  \"approvals\": {},\n  \"ledger\": {\n    \"call-1\": {\n      \"tool\": \"read_file\",\n      \"signature\": \"f4f4b08d51dc9e615e75b5b866258045b7128434d1eecf87e99d4547b1d7169e\",\n      \"status\": \"DONE\",\n      \"result\": {\n        \"text\": \"def add(a, b):\\n    \\\"\\\"\\\"返回两数之和。\\\"\\\"\\\"\\n    return a - b\\n\",\n        \"truncated\": false\n      }\n    },\n    \"call-2\": {\n      \"tool\": \"read_file\",\n      \"signature\": \"2910b4b39ac9764984ba5263f788d6a42f93700d23672ff78936e985d7a7911e\",\n      \"status\": \"DONE\",\n      \"result\": {\n        \"text\": \"from calc import add\\n\\ndef test_add():\\n    assert add(2, 3) == 5\\n\",\n        \"truncated\": false\n      }\n    },\n    \"call-3\": {\n      \"tool\": \"run_test\",\n      \"signature\": \"f041b04e73ce40482375b74ffdf7041fcc1848d888cd8685ea7ab206e490bddd\",\n      \"status\": \"DONE\",\n      \"result\": {\n        \"returncode\": 1,\n        \"reason\": null,\n        \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n        \"truncated\": false\n      }\n    },\n    \"call-4\": {\n      \"tool\": \"write_file\",\n      \"signature\": \"e492ebe549748213e0e2ffd9f22b1edd91931af2d677a1da6120a8bab8ce5e83\",\n      \"status\": \"DONE\",\n      \"result\": {\n        \"path\": \"calc.py\",\n        \"sha256\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\"\n      }\n    },\n    \"call-5\": {\n      \"tool\": \"run_test\",\n      \"signature\": \"f041b04e73ce40482375b74ffdf7041fcc1848d888cd8685ea7ab206e490bddd\",\n      \"status\": \"DONE\",\n      \"result\": {\n        \"returncode\": 0,\n        \"reason\": null,\n        \"output\": \".                                                                        [100%]\\n1 passed in 0.00s\\n\",\n        \"truncated\": false\n      }\n    },\n    \"call-6\": {\n      \"tool\": \"final_answer\",\n      \"signature\": \"897f71be5ce6f134e3f7b3d4f087bb17019c07fc50cc2cc615e007ea87b0a171\",\n      \"status\": \"DONE\",\n      \"result\": {\n        \"ok\": true,\n        \"answer\": \"已完成，请核对持久化证据。\"\n      }\n    }\n  },\n  \"pending\": null,\n  \"last_signature\": \"897f71be5ce6f134e3f7b3d4f087bb17019c07fc50cc2cc615e007ea87b0a171\",\n  \"repeat_count\": 1,\n  \"history\": [\n    {\n      \"id\": \"call-1\",\n      \"tool\": \"read_file\",\n      \"result\": {\n        \"text\": \"def add(a, b):\\n    \\\"\\\"\\\"返回两数之和。\\\"\\\"\\\"\\n    return a - b\\n\",\n        \"truncated\": false\n      }\n    },\n    {\n      \"id\": \"call-2\",\n      \"tool\": \"read_file\",\n      \"result\": {\n        \"text\": \"from calc import add\\n\\ndef test_add():\\n    assert add(2, 3) == 5\\n\",\n        \"truncated\": false\n      }\n    },\n    {\n      \"id\": \"call-3\",\n      \"tool\": \"run_test\",\n      \"result\": {\n        \"returncode\": 1,\n        \"reason\": null,\n        \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n        \"truncated\": false\n      }\n    },\n    {\n      \"id\": \"call-4\",\n      \"tool\": \"write_file\",\n      \"result\": {\n        \"path\": \"calc.py\",\n        \"sha256\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\"\n      }\n    },\n    {\n      \"id\": \"call-5\",\n      \"tool\": \"run_test\",\n      \"result\": {\n        \"returncode\": 0,\n        \"reason\": null,\n        \"output\": \".                                                                        [100%]\\n1 passed in 0.00s\\n\",\n        \"truncated\": false\n      }\n    },\n    {\n      \"id\": \"call-6\",\n      \"tool\": \"final_answer\",\n      \"result\": {\n        \"ok\": true,\n        \"answer\": \"已完成，请核对持久化证据。\"\n      }\n    }\n  ],\n  \"expected_snapshot\": {\n    \"calc.py\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\",\n    \"tests/test_calc.py\": \"84d63c31d4762421e5f4563c3d6668a99c1c311301d7db09175241ae30982f84\"\n  },\n  \"initial_sources\": {\n    \"calc.py\": \"d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62\",\n    \"tests/test_calc.py\": \"84d63c31d4762421e5f4563c3d6668a99c1c311301d7db09175241ae30982f84\"\n  },\n  \"final_answer\": \"已完成，请核对持久化证据。\",\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_GRANTED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 4,\n      \"event\": \"RESUME\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 5,\n      \"event\": \"COMPLETION_ACCEPTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"COMPLETED\",\n      \"reason\": \"VERIFIED\"\n    }\n  ],\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": true,\n    \"can_approve\": false,\n    \"code\": \"READY\",\n    \"notes\": [\n      \"结构、校验和、工作区和调用账本检查通过，可以恢复。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"RUNNING\",\n    \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\"\n  },\n  \"checksum\": \"530e715b2cc2bb7d637a9ce5755430f49a03436c69f0d7225b26adf26b77353a\",\n  \"inspection\": {\n    \"valid\": true,\n    \"can_resume\": false,\n    \"can_approve\": false,\n    \"code\": \"RUN_TERMINAL\",\n    \"notes\": [\n      \"运行已处于 COMPLETED，不会重启模型；核对后另建新 run。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"COMPLETED\",\n    \"run_id\": \"7e08d0b809ca4bb3b76631a7b003b4b4\"\n  }\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "init-demo",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo"
+    ],
+    "returncode": 0,
+    "stdout": "示例工作区已创建： /Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "run",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/state",
+      "--kind",
+      "understand"
+    ],
+    "returncode": 0,
+    "stdout": "待审批 Diff：\n--- artifacts/report.md\n+++ artifacts/report.md\n@@ -0,0 +1,4 @@\n+# 代码理解报告\n+\n+calc.py 的 add(a, b) 应返回两数之和，目前却使用减法。\n+测试 tests/test_calc.py 断言 add(2, 3) == 5，因此当前实现会失败。\n\n{\n  \"run_id\": \"40e9d60db0a745d888931d715c217205\",\n  \"status\": \"WAITING_APPROVAL\",\n  \"stop_reason\": null,\n  \"steps\": 3,\n  \"calls\": 3,\n  \"pending\": {\n    \"id\": \"call-3\",\n    \"tool\": \"write_file\",\n    \"args\": {\n      \"path\": \"artifacts/report.md\",\n      \"content\": \"# 代码理解报告\\n\\ncalc.py 的 add(a, b) 应返回两数之和，目前却使用减法。\\n测试 tests/test_calc.py 断言 add(2, 3) == 5，因此当前实现会失败。\\n\"\n    },\n    \"signature\": \"b007bd9bd895c3257f918d0895d1918dd5c057eb18ca8cd44050bb0006ccc32e\",\n    \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\"\n  },\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"understand\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 2,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"report\",\n        \"objective\": \"约定报告已真实写入\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"report\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.0128,\n  \"resume_inspection\": null,\n  \"missing\": [\n    {\n      \"code\": \"MISSING_REPORT\",\n      \"message\": \"必须写入约定交付物 artifacts/report.md，其他 Markdown 不能替代。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 report 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": true,\n  \"code\": \"WAITING_APPROVAL\",\n  \"notes\": [\n    \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"WAITING_APPROVAL\",\n  \"run_id\": \"40e9d60db0a745d888931d715c217205\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "approve",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/state",
+      "--call-id",
+      "call-3",
+      "--actor",
+      "verification-script"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"40e9d60db0a745d888931d715c217205\",\n  \"status\": \"RUNNING\",\n  \"stop_reason\": null,\n  \"steps\": 3,\n  \"calls\": 3,\n  \"pending\": null,\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"write\",\n      \"path\": \"artifacts/report.md\",\n      \"sha256\": \"e57a0296b43b96313db1acba0174e28ecb9e2c2c7a2d87e601a1e0cc0b9d7861\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"report\"\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"understand\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 2,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"report\",\n        \"objective\": \"约定报告已真实写入\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"report\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_GRANTED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.015807,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": false,\n    \"can_approve\": true,\n    \"code\": \"WAITING_APPROVAL\",\n    \"notes\": [\n      \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"WAITING_APPROVAL\",\n    \"run_id\": \"40e9d60db0a745d888931d715c217205\"\n  },\n  \"missing\": []\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "resume",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"40e9d60db0a745d888931d715c217205\",\n  \"status\": \"COMPLETED\",\n  \"stop_reason\": \"VERIFIED\",\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": null,\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"write\",\n      \"path\": \"artifacts/report.md\",\n      \"sha256\": \"e57a0296b43b96313db1acba0174e28ecb9e2c2c7a2d87e601a1e0cc0b9d7861\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"report\"\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"understand\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 2,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"report\",\n        \"objective\": \"约定报告已真实写入\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"report\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"completed\",\n        \"attempts\": 1,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_GRANTED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 4,\n      \"event\": \"RESUME\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 5,\n      \"event\": \"COMPLETION_ACCEPTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"COMPLETED\",\n      \"reason\": \"VERIFIED\"\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.024624,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": true,\n    \"can_approve\": false,\n    \"code\": \"READY\",\n    \"notes\": [\n      \"结构、校验和、工作区和调用账本检查通过，可以恢复。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"RUNNING\",\n    \"run_id\": \"40e9d60db0a745d888931d715c217205\"\n  },\n  \"missing\": []\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/understand/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": false,\n  \"code\": \"RUN_TERMINAL\",\n  \"notes\": [\n    \"运行已处于 COMPLETED，不会重启模型；核对后另建新 run。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"COMPLETED\",\n  \"run_id\": \"40e9d60db0a745d888931d715c217205\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "init-demo",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo"
+    ],
+    "returncode": 0,
+    "stdout": "示例工作区已创建： /Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "run",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/state",
+      "--kind",
+      "repair"
+    ],
+    "returncode": 0,
+    "stdout": "待审批 Diff：\n--- calc.py\n+++ calc.py\n@@ -1,3 +1,3 @@\n def add(a, b):\n     \"\"\"返回两数之和。\"\"\"\n-    return a - b\n+    return a + b\n\n{\n  \"run_id\": \"1007227357764791ac8fabbe6fcce639\",\n  \"status\": \"WAITING_APPROVAL\",\n  \"stop_reason\": null,\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": {\n    \"id\": \"call-4\",\n    \"tool\": \"write_file\",\n    \"args\": {\n      \"path\": \"calc.py\",\n      \"content\": \"def add(a, b):\\n    \\\"\\\"\\\"返回两数之和。\\\"\\\"\\\"\\n    return a + b\\n\"\n    },\n    \"signature\": \"e492ebe549748213e0e2ffd9f22b1edd91931af2d677a1da6120a8bab8ce5e83\",\n    \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\"\n  },\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.118573,\n  \"resume_inspection\": null,\n  \"missing\": [\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"LATEST_TEST_NOT_PASSED\",\n      \"message\": \"最后一次测试未通过或结果未知：1；必须重新测试。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：pending\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": true,\n  \"code\": \"WAITING_APPROVAL\",\n  \"notes\": [\n    \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"WAITING_APPROVAL\",\n  \"run_id\": \"1007227357764791ac8fabbe6fcce639\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "scripts/crash_demo.py",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/state"
+    ],
+    "returncode": 73,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "resume",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"1007227357764791ac8fabbe6fcce639\",\n  \"status\": \"UNKNOWN_RESULT\",\n  \"stop_reason\": \"UNKNOWN_RESULT\",\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": null,\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"in_progress\",\n        \"attempts\": 1,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_GRANTED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 4,\n      \"event\": \"RECOVERY_UNCERTAIN\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"UNKNOWN_RESULT\",\n      \"reason\": \"UNKNOWN_RESULT\"\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.120058,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": false,\n    \"can_approve\": false,\n    \"code\": \"UNKNOWN_RESULT\",\n    \"notes\": [\n      \"存在已启动但结果未闭合的调用。先核对副作用，禁止自动重放。\"\n    ],\n    \"changed_files\": [\n      {\n        \"path\": \"calc.py\",\n        \"change\": \"modified\",\n        \"before\": \"d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62\",\n        \"after\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\"\n      }\n    ],\n    \"unresolved\": [\n      {\n        \"tool_call_id\": \"call-4\",\n        \"tool\": \"write_file\",\n        \"state\": \"EXECUTING\",\n        \"action\": \"人工核对真实文件；不得自动重放\"\n      }\n    ],\n    \"state\": \"RUNNING\",\n    \"run_id\": \"1007227357764791ac8fabbe6fcce639\"\n  },\n  \"missing\": [\n    {\n      \"code\": \"UNRESOLVED_CALL\",\n      \"message\": \"存在结果尚未闭合的调用，需要人工核对。\"\n    },\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"STALE_TEST\",\n      \"message\": \"最新测试不属于当前源码版本，请重新运行 run_test。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：in_progress\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/unknown/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": false,\n  \"code\": \"UNKNOWN_RESULT\",\n  \"notes\": [\n    \"存在已启动但结果未闭合的调用。先核对副作用，禁止自动重放。\"\n  ],\n  \"changed_files\": [\n    {\n      \"path\": \"calc.py\",\n      \"change\": \"modified\",\n      \"before\": \"d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62\",\n      \"after\": \"f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3\"\n    }\n  ],\n  \"unresolved\": [\n    {\n      \"tool_call_id\": \"call-4\",\n      \"tool\": \"write_file\",\n      \"state\": \"UNKNOWN_RESULT\",\n      \"action\": \"人工核对真实文件；不得自动重放\"\n    }\n  ],\n  \"state\": \"UNKNOWN_RESULT\",\n  \"run_id\": \"1007227357764791ac8fabbe6fcce639\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "init-demo",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/repo"
+    ],
+    "returncode": 0,
+    "stdout": "示例工作区已创建： /Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/repo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "run",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/state",
+      "--kind",
+      "repair"
+    ],
+    "returncode": 0,
+    "stdout": "待审批 Diff：\n--- calc.py\n+++ calc.py\n@@ -1,3 +1,3 @@\n def add(a, b):\n     \"\"\"返回两数之和。\"\"\"\n-    return a - b\n+    return a + b\n\n{\n  \"run_id\": \"22a3dec2a4144895b73b6ffee5f1e359\",\n  \"status\": \"WAITING_APPROVAL\",\n  \"stop_reason\": null,\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": {\n    \"id\": \"call-4\",\n    \"tool\": \"write_file\",\n    \"args\": {\n      \"path\": \"calc.py\",\n      \"content\": \"def add(a, b):\\n    \\\"\\\"\\\"返回两数之和。\\\"\\\"\\\"\\n    return a + b\\n\"\n    },\n    \"signature\": \"e492ebe549748213e0e2ffd9f22b1edd91931af2d677a1da6120a8bab8ce5e83\",\n    \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\"\n  },\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.105871,\n  \"resume_inspection\": null,\n  \"missing\": [\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"LATEST_TEST_NOT_PASSED\",\n      \"message\": \"最后一次测试未通过或结果未知：1；必须重新测试。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：pending\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": true,\n  \"code\": \"WAITING_APPROVAL\",\n  \"notes\": [\n    \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"WAITING_APPROVAL\",\n  \"run_id\": \"22a3dec2a4144895b73b6ffee5f1e359\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "resume",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"22a3dec2a4144895b73b6ffee5f1e359\",\n  \"status\": \"NEEDS_REVIEW\",\n  \"stop_reason\": \"WORKSPACE_CHANGED\",\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": null,\n  \"evidence\": [],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"blocked\",\n        \"attempts\": 3,\n        \"evidence_ids\": [],\n        \"last_error\": \"工作区变化，证据失效\"\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"blocked\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": \"工作区变化，证据失效\"\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"blocked\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": \"工作区变化，证据失效\"\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"blocked\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": \"工作区变化，证据失效\"\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"RECOVERY_WORKSPACE_CHANGED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"NEEDS_REVIEW\",\n      \"reason\": \"WORKSPACE_CHANGED\"\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.105871,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": false,\n    \"can_approve\": false,\n    \"code\": \"WORKSPACE_CHANGED\",\n    \"notes\": [\n      \"工作区与快照不同，旧证据和审批必须失效；请核对列出的文件。\"\n    ],\n    \"changed_files\": [\n      {\n        \"path\": \"calc.py\",\n        \"change\": \"modified\",\n        \"before\": \"d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62\",\n        \"after\": \"2246f398c5a03c9ce8aaad5eff6c2bc721786876d62472c57589a5884c08bb05\"\n      }\n    ],\n    \"unresolved\": [],\n    \"state\": \"WAITING_APPROVAL\",\n    \"run_id\": \"22a3dec2a4144895b73b6ffee5f1e359\"\n  },\n  \"missing\": [\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"MISSING_CURRENT_TEST\",\n      \"message\": \"尚未执行当前版本测试，请调用 run_test。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 inspect 尚未完成：blocked\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：blocked\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：blocked\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/changed/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": false,\n  \"code\": \"RUN_TERMINAL\",\n  \"notes\": [\n    \"运行已处于 NEEDS_REVIEW，不会重启模型；核对后另建新 run。\"\n  ],\n  \"changed_files\": [\n    {\n      \"path\": \"calc.py\",\n      \"change\": \"modified\",\n      \"before\": \"d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62\",\n      \"after\": \"2246f398c5a03c9ce8aaad5eff6c2bc721786876d62472c57589a5884c08bb05\"\n    }\n  ],\n  \"unresolved\": [],\n  \"state\": \"NEEDS_REVIEW\",\n  \"run_id\": \"22a3dec2a4144895b73b6ffee5f1e359\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "init-demo",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/repo"
+    ],
+    "returncode": 0,
+    "stdout": "示例工作区已创建： /Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/repo\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "run",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/state",
+      "--kind",
+      "repair"
+    ],
+    "returncode": 0,
+    "stdout": "待审批 Diff：\n--- calc.py\n+++ calc.py\n@@ -1,3 +1,3 @@\n def add(a, b):\n     \"\"\"返回两数之和。\"\"\"\n-    return a - b\n+    return a + b\n\n{\n  \"run_id\": \"eea9e1461df5483396286712f8b91ce5\",\n  \"status\": \"WAITING_APPROVAL\",\n  \"stop_reason\": null,\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": {\n    \"id\": \"call-4\",\n    \"tool\": \"write_file\",\n    \"args\": {\n      \"path\": \"calc.py\",\n      \"content\": \"def add(a, b):\\n    \\\"\\\"\\\"返回两数之和。\\\"\\\"\\\"\\n    return a + b\\n\"\n    },\n    \"signature\": \"e492ebe549748213e0e2ffd9f22b1edd91931af2d677a1da6120a8bab8ce5e83\",\n    \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\"\n  },\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.116857,\n  \"resume_inspection\": null,\n  \"missing\": [\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"LATEST_TEST_NOT_PASSED\",\n      \"message\": \"最后一次测试未通过或结果未知：1；必须重新测试。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：pending\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": true,\n  \"code\": \"WAITING_APPROVAL\",\n  \"notes\": [\n    \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"WAITING_APPROVAL\",\n  \"run_id\": \"eea9e1461df5483396286712f8b91ce5\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "approve",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/state",
+      "--call-id",
+      "call-4",
+      "--actor",
+      "verification-script",
+      "--deny"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"run_id\": \"eea9e1461df5483396286712f8b91ce5\",\n  \"status\": \"STOPPED\",\n  \"stop_reason\": \"APPROVAL_DENIED\",\n  \"steps\": 4,\n  \"calls\": 4,\n  \"pending\": null,\n  \"evidence\": [\n    {\n      \"id\": \"ev-1\",\n      \"kind\": \"read\",\n      \"path\": \"calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-1\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-2\",\n      \"kind\": \"read\",\n      \"path\": \"tests/test_calc.py\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"call_id\": \"call-2\",\n      \"step_id\": \"inspect\"\n    },\n    {\n      \"id\": \"ev-3\",\n      \"kind\": \"test\",\n      \"revision\": \"0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda\",\n      \"stable\": true,\n      \"scope\": \"all\",\n      \"call_id\": \"call-3\",\n      \"step_id\": \"inspect\",\n      \"returncode\": 1,\n      \"reason\": null,\n      \"output\": \"F                                                                        [100%]\\n=================================== FAILURES ===================================\\n___________________________________ test_add ___________________________________\\n\\n    def test_add():\\n>       assert add(2, 3) == 5\\nE       assert -1 == 5\\nE        +  where -1 = add(2, 3)\\n\\ntests/test_calc.py:4: AssertionError\\n=========================== short test summary info ============================\\nFAILED tests/test_calc.py::test_add - assert -1 == 5\\n1 failed in 0.01s\\n\",\n      \"truncated\": false\n    }\n  ],\n  \"plan\": {\n    \"version\": 1,\n    \"kind\": \"repair\",\n    \"steps\": [\n      {\n        \"id\": \"inspect\",\n        \"objective\": \"已读取相关源码，理解任务现场\",\n        \"depends_on\": [],\n        \"success_criteria\": [\n          \"read\"\n        ],\n        \"status\": \"completed\",\n        \"attempts\": 3,\n        \"evidence_ids\": [\n          \"ev-1\",\n          \"ev-2\",\n          \"ev-3\"\n        ],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"change\",\n        \"objective\": \"源码已按审批请求修改\",\n        \"depends_on\": [\n          \"inspect\"\n        ],\n        \"success_criteria\": [\n          \"write\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"verify\",\n        \"objective\": \"当前版本最后一次测试通过\",\n        \"depends_on\": [\n          \"change\"\n        ],\n        \"success_criteria\": [\n          \"test\"\n        ],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      },\n      {\n        \"id\": \"finalize\",\n        \"objective\": \"完成契约接受交付\",\n        \"depends_on\": [\n          \"verify\"\n        ],\n        \"success_criteria\": [],\n        \"status\": \"pending\",\n        \"attempts\": 0,\n        \"evidence_ids\": [],\n        \"last_error\": null\n      }\n    ]\n  },\n  \"transitions\": [\n    {\n      \"seq\": 1,\n      \"event\": \"START\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"RUNNING\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 2,\n      \"event\": \"APPROVAL_REQUESTED\",\n      \"from_state\": \"RUNNING\",\n      \"to_state\": \"WAITING_APPROVAL\",\n      \"reason\": null\n    },\n    {\n      \"seq\": 3,\n      \"event\": \"APPROVAL_DENIED\",\n      \"from_state\": \"WAITING_APPROVAL\",\n      \"to_state\": \"STOPPED\",\n      \"reason\": \"APPROVAL_DENIED\"\n    }\n  ],\n  \"tokens_used\": 0,\n  \"elapsed_seconds\": 0.117614,\n  \"resume_inspection\": {\n    \"valid\": true,\n    \"can_resume\": false,\n    \"can_approve\": true,\n    \"code\": \"WAITING_APPROVAL\",\n    \"notes\": [\n      \"请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。\"\n    ],\n    \"changed_files\": [],\n    \"unresolved\": [],\n    \"state\": \"WAITING_APPROVAL\",\n    \"run_id\": \"eea9e1461df5483396286712f8b91ce5\"\n  },\n  \"missing\": [\n    {\n      \"code\": \"MISSING_SOURCE_DIFF\",\n      \"message\": \"缺少与当前源码内容一致的真实修复证据。\"\n    },\n    {\n      \"code\": \"LATEST_TEST_NOT_PASSED\",\n      \"message\": \"最后一次测试未通过或结果未知：1；必须重新测试。\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 change 尚未完成：pending\"\n    },\n    {\n      \"code\": \"PLAN_INCOMPLETE\",\n      \"message\": \"计划步骤 verify 尚未完成：pending\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+      "-m",
+      "guarded_harness.cli",
+      "inspect",
+      "--workspace",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/repo",
+      "--run-dir",
+      "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/20261018-184638/deny/state"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"valid\": true,\n  \"can_resume\": false,\n  \"can_approve\": false,\n  \"code\": \"RUN_TERMINAL\",\n  \"notes\": [\n    \"运行已处于 STOPPED，不会重启模型；核对后另建新 run。\"\n  ],\n  \"changed_files\": [],\n  \"unresolved\": [],\n  \"state\": \"STOPPED\",\n  \"run_id\": \"eea9e1461df5483396286712f8b91ce5\"\n}\n",
+    "stderr": ""
+  }
+]

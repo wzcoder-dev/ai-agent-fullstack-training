@@ -1,0 +1,43 @@
+{
+  "provider": "DeepSeek",
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "endpoint": "https://api.deepseek.com",
+  "generated_at": "2026-10-18T11:26:45.371936+08:00",
+  "status": "COMPLETED",
+  "stop_reason": "VERIFIED",
+  "run_id": "3892b516bdb04ae1b8fac484345c3a55",
+  "steps": 11,
+  "calls": 11,
+  "input_tokens": 27610,
+  "output_tokens": 519,
+  "model_responses": 11,
+  "served_models": [
+    "deepseek-flash"
+  ],
+  "model_time_seconds": 9.421,
+  "verification_seconds": 11.323,
+  "approval_actor": "live-verification-script-exact-fixture",
+  "fixture_diff_exactly_matched": true,
+  "test_returncodes": [
+    1,
+    0
+  ],
+  "evidence_dir": "artifacts/deepseek-20261018-112634",
+  "workspace": "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/deepseek-20261018-112634/repo",
+  "source_sha256": {
+    "guarded_harness/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "guarded_harness/audit.py": "946f782801f6e3278f86c5acba664ee0575ab085625200f0d44579372b7a3b41",
+    "guarded_harness/checkpoint.py": "fa1de9f0636d21a04567b3bfd2701db5f1204e1b02072ffe726730e340788d11",
+    "guarded_harness/cli.py": "6058e5714da5cb8ff9ef5eac85d42cd1f122b28d7078817a86b09ee0a9407bd0",
+    "guarded_harness/completion.py": "407349fa3e1b4321bfd101cc7fc4cdd78221a5af4c696a4c91130d371c5ba534",
+    "guarded_harness/context_budget.py": "215461541cef8c493abbbfa84db57e44b9d41ab4db62207f1ebe7c27d1783f1e",
+    "guarded_harness/demo.py": "759d2533c66cf82ffd1f9377517723fcca2c08429e066a999c8786aecd4db638",
+    "guarded_harness/gate.py": "93cb813398315bc8fa45e7d5f7e2c8e5e355c27f458cd462f74b2c0dbc49ec8d",
+    "guarded_harness/harness.py": "ccfacba8c7e399bd6243863b25d71a7953b875dd2e2fef24d44d8aafbac2d715",
+    "guarded_harness/models.py": "1a635fa9b586f858984ea0c93e9e8fc132d0fe4ae36bcdaec83ee1ca5fde1b5c",
+    "guarded_harness/plan_store.py": "365864404b7c370b995190ad1487c334bb14d2006cc2cb856060b2820fa407a1",
+    "guarded_harness/sandbox.py": "6febffd8f977c91f7f4325865531f74900b95075757f2f71382ebfc50b3234e1",
+    "guarded_harness/state_store.py": "16ff9743e63d9b7be5c343d3309e5329e62343af18e1378932a515103e825cb5"
+  }
+}

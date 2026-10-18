@@ -1,0 +1,7 @@
+--- before/calc.py
++++ after/calc.py
+@@ -1,3 +1,3 @@
+ def add(a, b):
+     """返回两数之和。"""
+-    return a - b
++    return a + b

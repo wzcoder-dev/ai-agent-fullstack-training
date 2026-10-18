@@ -1,0 +1,9 @@
+{
+  "command": [
+    "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+    "scripts/build_guide.py"
+  ],
+  "returncode": 0,
+  "stdout": "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/learning-guide.html\n",
+  "stderr": ""
+}

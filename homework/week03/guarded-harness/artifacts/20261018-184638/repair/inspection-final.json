@@ -1,0 +1,13 @@
+{
+  "valid": true,
+  "can_resume": false,
+  "can_approve": false,
+  "code": "RUN_TERMINAL",
+  "notes": [
+    "运行已处于 COMPLETED，不会重启模型；核对后另建新 run。"
+  ],
+  "changed_files": [],
+  "unresolved": [],
+  "state": "COMPLETED",
+  "run_id": "7e08d0b809ca4bb3b76631a7b003b4b4"
+}

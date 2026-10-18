@@ -1,0 +1,40 @@
+{
+  "provider": "DeepSeek",
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "endpoint": "https://api.deepseek.com",
+  "generated_at": "2026-10-18T11:05:25.384298+08:00",
+  "status": "COMPLETED",
+  "stop_reason": "VERIFIED",
+  "run_id": "498d463ac2e74c49b181d777514226cd",
+  "steps": 6,
+  "calls": 6,
+  "input_tokens": 10842,
+  "output_tokens": 283,
+  "model_responses": 6,
+  "served_models": [
+    "deepseek-flash"
+  ],
+  "model_time_seconds": 6.562,
+  "verification_seconds": 3.131,
+  "approval_actor": "live-verification-script-exact-fixture",
+  "fixture_diff_exactly_matched": true,
+  "test_returncodes": [
+    1,
+    0
+  ],
+  "evidence_dir": "artifacts/deepseek-20261018-110522",
+  "workspace": "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/deepseek-20261018-110440/repo",
+  "source_sha256": {
+    "guarded_harness/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "guarded_harness/audit.py": "946f782801f6e3278f86c5acba664ee0575ab085625200f0d44579372b7a3b41",
+    "guarded_harness/checkpoint.py": "452332d00c12965d1b28f26a08dc92c15aa20de378e533da8ab8ba26f20c8e3c",
+    "guarded_harness/cli.py": "24af3756106976a0d6ee8e236952a1cffb7615ee2c864e5ff11b8dc8f6bccd14",
+    "guarded_harness/demo.py": "759d2533c66cf82ffd1f9377517723fcca2c08429e066a999c8786aecd4db638",
+    "guarded_harness/gate.py": "1768cdaa4c2eae9e48125bb8e52439f6caaf59d91dd58a9c97a6b2b60632f6b4",
+    "guarded_harness/harness.py": "d2c061d8b0c68ef10833ba0961d360dcefadb47de124a014228c3e1de9ffd50f",
+    "guarded_harness/models.py": "1c192b426e1ea6c5abb4024fafdfb84b7c19977667debb378b0f8c6ff1d8eb1e",
+    "guarded_harness/sandbox.py": "6febffd8f977c91f7f4325865531f74900b95075757f2f71382ebfc50b3234e1",
+    "guarded_harness/state_store.py": "ac8301dec01f14fe7fa54a7b47da2c428e4d54faf9403468b7c874a1a892d5c9"
+  }
+}

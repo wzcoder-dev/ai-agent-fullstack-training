@@ -1,0 +1,2 @@
+示例工作区已创建： /Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/runs/deepseek-20261018-110440/repo
+

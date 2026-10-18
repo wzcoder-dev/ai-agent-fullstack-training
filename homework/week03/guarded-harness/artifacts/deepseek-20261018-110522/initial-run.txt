@@ -1,0 +1,45 @@
+待审批 Diff：
+--- calc.py
++++ calc.py
+@@ -1,3 +1,3 @@
+ def add(a, b):
+     """返回两数之和。"""
+-    return a - b
++    return a + b
+
+{
+  "run_id": "498d463ac2e74c49b181d777514226cd",
+  "status": "WAITING_APPROVAL",
+  "stop_reason": null,
+  "steps": 4,
+  "calls": 4,
+  "pending": {
+    "id": "call_00_0yqTjxVwiVwmTCYskuXd8103",
+    "tool": "write_file",
+    "args": {
+      "path": "calc.py",
+      "content": "def add(a, b):\n    \"\"\"返回两数之和。\"\"\"\n    return a + b\n"
+    },
+    "signature": "e492ebe549748213e0e2ffd9f22b1edd91931af2d677a1da6120a8bab8ce5e83",
+    "revision": "0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda"
+  },
+  "evidence": [
+    {
+      "kind": "read",
+      "path": "calc.py",
+      "revision": "0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda",
+      "call_id": "call_00_EayzRjOGM5m4fnTyJMLu3320"
+    },
+    {
+      "kind": "test",
+      "revision": "0c11b537b38ae8f7874ea7ee3c526bd38a9ecba9a23487522d607201c165ddda",
+      "stable": true,
+      "call_id": "call_00_LSZa63d9XCECHVa8OErC7360",
+      "returncode": 1,
+      "reason": null,
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n___________________________________ test_add ___________________________________\n\n    def test_add():\n>       assert add(2, 3) == 5\nE       assert -1 == 5\nE        +  where -1 = add(2, 3)\n\ntests/test_calc.py:4: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_calc.py::test_add - assert -1 == 5\n1 failed in 0.01s\n",
+      "truncated": false
+    }
+  ]
+}
+

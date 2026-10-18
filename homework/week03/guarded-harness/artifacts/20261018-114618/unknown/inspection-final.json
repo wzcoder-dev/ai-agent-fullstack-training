@@ -1,0 +1,27 @@
+{
+  "valid": true,
+  "can_resume": false,
+  "can_approve": false,
+  "code": "UNKNOWN_RESULT",
+  "notes": [
+    "存在已启动但结果未闭合的调用。先核对副作用，禁止自动重放。"
+  ],
+  "changed_files": [
+    {
+      "path": "calc.py",
+      "change": "modified",
+      "before": "d6fdc5baf36253736a805a586d79df1a4f4439dc72e95a6e7c74a99366796d62",
+      "after": "f3555f7c85c6b7e519eb5702d7cb616a422887385c8e81b81ef8fd97114269d3"
+    }
+  ],
+  "unresolved": [
+    {
+      "tool_call_id": "call-4",
+      "tool": "write_file",
+      "state": "UNKNOWN_RESULT",
+      "action": "人工核对真实文件；不得自动重放"
+    }
+  ],
+  "state": "UNKNOWN_RESULT",
+  "run_id": "4a287f57dbc44944912255f2f6ea3249"
+}

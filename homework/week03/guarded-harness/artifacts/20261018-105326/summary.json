@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-10-18T10:53:32.496888+08:00",
+  "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+  "scenarios": {
+    "repair": {
+      "status": "COMPLETED",
+      "stop_reason": "VERIFIED",
+      "steps": 6,
+      "calls": 6,
+      "run_id": "582eaf36307b4145853102e8c138c1ae"
+    },
+    "understand": {
+      "status": "COMPLETED",
+      "stop_reason": "VERIFIED",
+      "steps": 4,
+      "calls": 4,
+      "run_id": "dc3b9c765fa349f895f78ca7300a564a"
+    },
+    "unknown": {
+      "status": "UNKNOWN_RESULT",
+      "stop_reason": "UNKNOWN_RESULT",
+      "steps": 4,
+      "calls": 4,
+      "run_id": "3c584534a56747efb7c9bad720003540"
+    },
+    "changed": {
+      "status": "NEEDS_REVIEW",
+      "stop_reason": "WORKSPACE_CHANGED",
+      "steps": 4,
+      "calls": 4,
+      "run_id": "01ac63cc016a4ea99b1d7e7195f715ac"
+    }
+  },
+  "real_model_executed": false,
+  "evidence_dir": "artifacts/20261018-105326"
+}

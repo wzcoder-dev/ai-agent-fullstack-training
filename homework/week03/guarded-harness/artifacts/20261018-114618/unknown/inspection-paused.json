@@ -1,0 +1,13 @@
+{
+  "valid": true,
+  "can_resume": false,
+  "can_approve": true,
+  "code": "WAITING_APPROVAL",
+  "notes": [
+    "请求尚未执行。核对 Diff 后批准或拒绝，不启动模型。"
+  ],
+  "changed_files": [],
+  "unresolved": [],
+  "state": "WAITING_APPROVAL",
+  "run_id": "4a287f57dbc44944912255f2f6ea3249"
+}

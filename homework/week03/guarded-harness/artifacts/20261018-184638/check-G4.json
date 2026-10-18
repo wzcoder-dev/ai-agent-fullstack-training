@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/zwz/Workspace/ai-agent-fullstack-training/homework/week03/guarded-harness/.venv/bin/python3",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_gate.py",
+    "-k",
+    "g4"
+  ],
+  "returncode": 0,
+  "stdout": ".                                                                        [100%]\n1 passed, 14 deselected in 0.01s\n",
+  "stderr": ""
+}
