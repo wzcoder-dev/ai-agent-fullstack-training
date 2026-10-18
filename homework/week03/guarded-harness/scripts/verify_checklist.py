@@ -1,4 +1,4 @@
-"""按 HTML 清单逐项执行：原 32 项 + R1–R6。真实模型默认仅核对本次已有证据。"""
+"""按验收清单逐项执行：原 32 项 + R1–R6。真实模型默认仅核对本次已有证据。"""
 from __future__ import annotations
 import argparse
 from datetime import datetime
@@ -51,19 +51,15 @@ def main():
     assert live['status'] == 'COMPLETED' and 0 in live['test_returncodes'] and 1 in live['test_returncodes']
     assert all(hashlib.sha256((P/f).read_bytes()).hexdigest() == sha for f,sha in live['source_sha256'].items())
     checks.append(dict(id='T2',title='当前源码的 DeepSeek 真实模型验收',passed=True,evidence=str(live_dir.relative_to(P)/'summary.json')))
-    checks.append(dict(id='M13',title='重新生成证据与 HTML',passed=False,evidence='guide-build.json'))
+    # 学习总结在 Obsidian；完整验收应保持代码目录不产生学习页面。
+    assert not (P/'learning-guide.html').exists()
+    assert not (P/'scripts/build_guide.py').exists()
+    checks.append(dict(id='M13',title='提交目录不含学习总结及其生成脚本',passed=True,evidence='submission-layout.json'))
     report = dict(generated_at=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(), checks=checks,
                   total=len(checks), passed=sum(c['passed'] for c in checks), suite_command=suite['command'])
+    (directory/'submission-layout.json').write_text(json.dumps(dict(
+        passed=True, absent=['learning-guide.html', 'scripts/build_guide.py']), ensure_ascii=False, indent=2))
     (directory/'checklist.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
-    build = command(['scripts/build_guide.py'])
-    page = (P/'learning-guide.html').read_text()
-    assert '<!doctype html>' in page and 'id="course"' in page and 'id="manual"' in page
-    assert 'id="live"' in page and 'checklist' in page
-    checks[-1]['passed'] = True
-    report['passed'] = sum(c['passed'] for c in checks)
-    (directory/'guide-build.json').write_text(json.dumps(build, ensure_ascii=False, indent=2))
-    (directory/'checklist.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
-    command(['scripts/build_guide.py'])  # 展示最终 M13 已验证，而非刚才构建前的 pending。
     print(json.dumps({k:v for k,v in report.items() if k != 'checks'}, ensure_ascii=False, indent=2))
     print(directory/'checklist.json')
 

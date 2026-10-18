@@ -6,7 +6,6 @@
 
 已验证：87 项测试通过、38 项清单复验通过、5 条跨进程演示符合预期；DeepSeek 真实修复最终为 `COMPLETED / VERIFIED`。最新确定性与真实模型记录分别由 [artifacts/latest.json](artifacts/latest.json) 和 [artifacts/live-latest.json](artifacts/live-latest.json) 指向。
 
-精简学习手册见 [learning-guide.html](learning-guide.html)：9 个设计点、面向 C 开发者的中文注释核心代码、每点手动复测及最终掌握清单。可直接用浏览器离线阅读；原始验收记录保留在 artifacts/，不在学习页面展开。
 
 ## 安装与验证
 
@@ -17,7 +16,6 @@ cd homework/week03/guarded-harness
 uv sync --locked
 uv run pytest -q
 uv run python scripts/verify.py
-uv run python scripts/build_guide.py
 ```
 
 使用 Python 3.12，smolagents 1.26.0；uv.lock 锁定依赖。Fake Model 不需要 API Key，运行循环使用实际 ToolCallingAgent。
@@ -43,7 +41,6 @@ uv run python -m guarded_harness.cli status --workspace runs/demo01/repo --run-d
 - `tests/`：老师要求的六个测试文件、课程对齐回归测试与共享 fixture。
 - `scripts/verify.py`：运行自动化测试与五个跨进程示例，保存真实输出。
 - `scripts/crash_demo.py`：仅对自带示例注入进程崩溃。
-- `scripts/build_guide.py`：从当前源码生成带中文注释的精简 HTML，不依赖验收产物。
 - `artifacts/`：测试结果、JUnit、完整命令记录、审计、Checkpoint 与 Diff。
 - `runs/`：本地演示工作区，已忽略；状态目录必须位于被操作仓库之外。
 
@@ -67,7 +64,6 @@ CLI 在单个 run 内使用文件锁；不要在多个进程中直接调用 Pyth
 ```bash
 uv sync --locked --extra live
 uv run --extra live python scripts/verify_deepseek.py
-uv run python scripts/build_guide.py
 ```
 
 验收脚本仅对自带示例中与 FIXED fixture 完全相同的 calc.py 修复自动审批，actor 明确记录为测试脚本。其他模型写入不自动批准。每次执行会产生真实 API 请求和新的 artifacts/deepseek-时间戳/ 证据。模型 ID、请求 ID、耗时和 token 用量写入审计，密钥不落盘。DeepSeek 当前默认思考模式与框架 tool_choice=required 不兼容，本次显式使用 thinking=disabled；未验证思考模式。
@@ -84,7 +80,7 @@ uv run python scripts/build_guide.py
 - **R6**：v2 Checkpoint 增加 checksum 与结构检查。`inspect` / `status` 只读报告；旧 v1 记录只读保留，不自动迁移续跑。用新目录演示新版。
 
 ```bash
-# 不发起新模型请求：核对当前源码的最新 DeepSeek 证据，执行其余全部清单并更新 HTML。
+# 不发起新模型请求：核对当前源码的最新 DeepSeek 证据，执行其余全部清单并保存验收记录。
 uv run --extra live python scripts/verify_checklist.py
 # 明确包含新一轮 DeepSeek 请求：
 uv run --extra live python scripts/verify_checklist.py --live

@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "absent": [
+    "learning-guide.html",
+    "scripts/build_guide.py"
+  ]
+}
