@@ -34,7 +34,7 @@ def log(root: Path, value: dict) -> None:
 
 
 def prepare(root: Path = ROOT, source: Path | None = None) -> dict:
-    source = source or root.parents[3] / 'course_code/week04/4-6/rag/corpus'
+    source = source or root.parents[2] / 'course_code/week04/4-6/rag/corpus'
     if (root / 'corpus/current').exists() or (root / 'corpus/original').exists():
         raise ValueError('corpus already exists; preparation never overwrites existing work')
     shutil.copytree(source, root / 'corpus/original')
@@ -71,7 +71,7 @@ def prepare(root: Path = ROOT, source: Path | None = None) -> dict:
                                     'docs/logout-requirement.md': 'history/2026-10-06-logout-request.md'}}
     dump(root / 'corpus/manifest.json', manifest)
     # Keep the teacher questions and assertions intact, with an explicitly adapted gold set.
-    questions = json.loads((root.parents[3] / 'course_code/week04/4-4/eval/questions.json').read_text())
+    questions = json.loads((root.parents[2] / 'course_code/week04/4-4/eval/questions.json').read_text())
     for q in questions['questions']:
         for g in q['gold']:
             if g['file'] == 'history/2026-09-12-expiry-bug.md': g['file'] = 'docs/expiry-boundary.md'

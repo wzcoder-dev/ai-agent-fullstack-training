@@ -65,7 +65,7 @@ def main():
     originals = snapshot(ROOT / 'corpus/original')
     current = snapshot(ROOT / 'corpus/current')
     questions = (ROOT / 'eval/questions.json').read_bytes()
-    course = ROOT.parents[3] / 'course_code/week04/4-6/rag/corpus'
+    course = ROOT.parents[2] / 'course_code/week04/4-6/rag/corpus'
     assert originals == snapshot(course) and len(originals) == 12
     model = embedding('bge')
     success = False
