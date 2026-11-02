@@ -1,0 +1,124 @@
+{
+  "question": "登录会话的有效期是多少分钟？",
+  "version": "ef7e18d4d9fd-e02708de",
+  "model": "bge",
+  "vector": [
+    {
+      "id": "5e6141b537e0dd49bc9162153640174719c8c5afd99de42956655872c82e542f",
+      "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 30 分钟。\n- 计时方式：从签发时刻开始计算，30 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+      "source": "docs/session-rules.md",
+      "heading": "登录会话有效期规则 > 有效期长度",
+      "score": 0.8042343310141247,
+      "score_type": "cosine"
+    },
+    {
+      "id": "3c518c0c227e120e287ff8342818d74beb37eadfa9fc0c57613a49a1d7a63f6f",
+      "text": "# app/session.py > SESSION_TTL_SECONDS\n\nSESSION_TTL_SECONDS = 30 * 60  # 登录会话有效期，单位秒",
+      "source": "app/session.py",
+      "heading": "SESSION_TTL_SECONDS",
+      "score": 0.7389726822920301,
+      "score_type": "cosine"
+    },
+    {
+      "id": "685437653a504b9b9784d5072e13c5b3b31fca9a3aa9913ee5ca761c2905be30",
+      "text": "# 登录会话有效期规则 > 续期\n\n适用服务：login_demo 登录服务。\n\n- 用户发起请求后，服务在响应返回前刷新 `expires_at`。\n- 新的到期时间 = 请求到达时刻 + 30 分钟。",
+      "source": "docs/session-rules.md",
+      "heading": "登录会话有效期规则 > 续期",
+      "score": 0.7277137508966893,
+      "score_type": "cosine"
+    }
+  ],
+  "bm25": [
+    {
+      "id": "bc954b1a29daa2267f7704ce28dadd5bef514d25f1e162bb9286694d02cbf7fc",
+      "text": "服务: login_demo；会话类型: 登录会话；有效期: 30 分钟；可续期: 是；到期边界处理: 恰好到期视为无效；负责人: 认证组",
+      "source": "tables/session-matrix.csv",
+      "heading": "login_demo",
+      "score": 4.037445990819311,
+      "score_type": "bm25"
+    },
+    {
+      "id": "8ffb4fb727fdf8cd8d295b2e04d7d6e7bfa47f725f4a5beac8993315e78190d1",
+      "text": "服务: login_demo；会话类型: 匿名浏览会话；有效期: 120 分钟；可续期: 是；到期边界处理: 到期后重新签发；负责人: 认证组",
+      "source": "tables/session-matrix.csv",
+      "heading": "login_demo",
+      "score": 3.933401396529422,
+      "score_type": "bm25"
+    },
+    {
+      "id": "3457cc96364cb71eb7cd4c8d381fce85be16929657f7c96b33d0ea09a2ef33a8",
+      "text": "# 支付会话规则 > 与登录会话的区别\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 登录会话 30 分钟、可续期；支付会话 5 分钟、不可续期。\n- 两者共用 `expires_at` 字段名，排查问题时先确认是哪个服务的会话。",
+      "source": "docs/payment-session.md",
+      "heading": "支付会话规则 > 与登录会话的区别",
+      "score": 3.702880085203555,
+      "score_type": "bm25"
+    }
+  ],
+  "hybrid": [
+    {
+      "id": "5e6141b537e0dd49bc9162153640174719c8c5afd99de42956655872c82e542f",
+      "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 30 分钟。\n- 计时方式：从签发时刻开始计算，30 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+      "source": "docs/session-rules.md",
+      "heading": "登录会话有效期规则 > 有效期长度",
+      "score": 0.016162909836065574,
+      "score_type": "rrf"
+    },
+    {
+      "id": "685437653a504b9b9784d5072e13c5b3b31fca9a3aa9913ee5ca761c2905be30",
+      "text": "# 登录会话有效期规则 > 续期\n\n适用服务：login_demo 登录服务。\n\n- 用户发起请求后，服务在响应返回前刷新 `expires_at`。\n- 新的到期时间 = 请求到达时刻 + 30 分钟。",
+      "source": "docs/session-rules.md",
+      "heading": "登录会话有效期规则 > 续期",
+      "score": 0.015656565656565653,
+      "score_type": "rrf"
+    },
+    {
+      "id": "bc954b1a29daa2267f7704ce28dadd5bef514d25f1e162bb9286694d02cbf7fc",
+      "text": "服务: login_demo；会话类型: 登录会话；有效期: 30 分钟；可续期: 是；到期边界处理: 恰好到期视为无效；负责人: 认证组",
+      "source": "tables/session-matrix.csv",
+      "heading": "login_demo",
+      "score": 0.01552409339294585,
+      "score_type": "rrf"
+    }
+  ],
+  "rrf_weights": [
+    0.7,
+    0.3
+  ],
+  "candidate_k": 20,
+  "top_k": 3,
+  "query_seconds": 1.9761,
+  "generation": {
+    "answer": "登录会话有效期为 **30 分钟**。[1][3]",
+    "model": "deepseek-flash",
+    "provider": "deepseek",
+    "citations": [
+      {
+        "number": 1,
+        "id": "5e6141b537e0dd49bc9162153640174719c8c5afd99de42956655872c82e542f",
+        "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 30 分钟。\n- 计时方式：从签发时刻开始计算，30 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+        "source": "docs/session-rules.md",
+        "heading": "登录会话有效期规则 > 有效期长度",
+        "score": 0.016162909836065574,
+        "score_type": "rrf"
+      },
+      {
+        "number": 2,
+        "id": "685437653a504b9b9784d5072e13c5b3b31fca9a3aa9913ee5ca761c2905be30",
+        "text": "# 登录会话有效期规则 > 续期\n\n适用服务：login_demo 登录服务。\n\n- 用户发起请求后，服务在响应返回前刷新 `expires_at`。\n- 新的到期时间 = 请求到达时刻 + 30 分钟。",
+        "source": "docs/session-rules.md",
+        "heading": "登录会话有效期规则 > 续期",
+        "score": 0.015656565656565653,
+        "score_type": "rrf"
+      },
+      {
+        "number": 3,
+        "id": "bc954b1a29daa2267f7704ce28dadd5bef514d25f1e162bb9286694d02cbf7fc",
+        "text": "服务: login_demo；会话类型: 登录会话；有效期: 30 分钟；可续期: 是；到期边界处理: 恰好到期视为无效；负责人: 认证组",
+        "source": "tables/session-matrix.csv",
+        "heading": "login_demo",
+        "score": 0.01552409339294585,
+        "score_type": "rrf"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1020 @@
+{
+  "model": "bge",
+  "embedding_model": "BAAI/bge-small-zh-v1.5",
+  "embedding_backend": "torch",
+  "version": "02826f1df994-6ecfe4a2",
+  "source_hash": "02826f1df994d3de4948569374d95391bb19e259408086a46f6bf28a046a4d1e",
+  "dimensions": 512,
+  "build_seconds": 0.225,
+  "mean_query_seconds": 0.0047,
+  "questions": 8,
+  "top_k": 3,
+  "metric_note": "gold_precision仅按课程指定gold定位计算；gold不穷举所有可回答的替代片段，低分不等于实际证据无关。检索指标不等于答案正确率。",
+  "summary": {
+    "vector": {
+      "recall": 0.875,
+      "gold_precision": 0.4167,
+      "hit": 0.875,
+      "complete_hit": 0.875
+    },
+    "bm25": {
+      "recall": 0.625,
+      "gold_precision": 0.3333,
+      "hit": 0.75,
+      "complete_hit": 0.5
+    },
+    "hybrid": {
+      "recall": 0.875,
+      "gold_precision": 0.4167,
+      "hit": 0.875,
+      "complete_hit": 0.875
+    }
+  },
+  "rows": [
+    {
+      "id": "q1",
+      "gold": [
+        {
+          "file": "docs/session-rules.md",
+          "heading": "有效期长度"
+        }
+      ],
+      "expected": [
+        "20 分钟"
+      ],
+      "retrieval": {
+        "question": "登录会话的有效期是多少分钟？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "6c8d98ca12b1301a572407037e6e7bccb311ee0d4275d3003bccce9203adc535",
+            "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 20 分钟。\n- 计时方式：从签发时刻开始计算，20 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 有效期长度",
+            "score": 0.8035796465890633,
+            "score_type": "cosine"
+          },
+          {
+            "id": "32123a136281987ee1f2d68b89eb77ad8a02c837b3651d7a2d5b5de3ca558350",
+            "text": "# app/session.py > SESSION_TTL_SECONDS\n\nSESSION_TTL_SECONDS = 20 * 60  # 登录会话有效期，单位秒",
+            "source": "app/session.py",
+            "heading": "SESSION_TTL_SECONDS",
+            "score": 0.7360526126907712,
+            "score_type": "cosine"
+          },
+          {
+            "id": "1534ac28b96add08962fdefe48e7b14f6f4c88a54977f1606f645ae4b21b54c1",
+            "text": "# 登录会话有效期规则 > 续期\n\n适用服务：login_demo 登录服务。\n\n- 用户发起请求后，服务在响应返回前刷新 `expires_at`。\n- 新的到期时间 = 请求到达时刻 + 20 分钟。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 续期",
+            "score": 0.7256297681966674,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "e2b967a980cc79a8626a2fae4f3e09964631499f65bcc339f1d9c59f28c708f3",
+            "text": "服务: login_demo；会话类型: 登录会话；有效期: 20 分钟；可续期: 是；到期边界处理: 恰好到期视为无效；负责人: 认证组",
+            "source": "tables/session-matrix.csv",
+            "heading": "login_demo",
+            "score": 4.037445990819311,
+            "score_type": "bm25"
+          },
+          {
+            "id": "8ffb4fb727fdf8cd8d295b2e04d7d6e7bfa47f725f4a5beac8993315e78190d1",
+            "text": "服务: login_demo；会话类型: 匿名浏览会话；有效期: 120 分钟；可续期: 是；到期边界处理: 到期后重新签发；负责人: 认证组",
+            "source": "tables/session-matrix.csv",
+            "heading": "login_demo",
+            "score": 3.933401396529422,
+            "score_type": "bm25"
+          },
+          {
+            "id": "7b9afcaff3c7b67197ae16f203503b09f4f71bced32c94d682d5a03903724965",
+            "text": "# 支付会话规则 > 与登录会话的区别\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 登录会话 20 分钟、可续期；支付会话 5 分钟、不可续期。\n- 两者共用 `expires_at` 字段名，排查问题时先确认是哪个服务的会话。",
+            "source": "docs/payment-session.md",
+            "heading": "支付会话规则 > 与登录会话的区别",
+            "score": 3.702880085203555,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "6c8d98ca12b1301a572407037e6e7bccb311ee0d4275d3003bccce9203adc535",
+            "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 20 分钟。\n- 计时方式：从签发时刻开始计算，20 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 有效期长度",
+            "score": 0.016162909836065574,
+            "score_type": "rrf"
+          },
+          {
+            "id": "1534ac28b96add08962fdefe48e7b14f6f4c88a54977f1606f645ae4b21b54c1",
+            "text": "# 登录会话有效期规则 > 续期\n\n适用服务：login_demo 登录服务。\n\n- 用户发起请求后，服务在响应返回前刷新 `expires_at`。\n- 新的到期时间 = 请求到达时刻 + 20 分钟。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 续期",
+            "score": 0.015656565656565653,
+            "score_type": "rrf"
+          },
+          {
+            "id": "e2b967a980cc79a8626a2fae4f3e09964631499f65bcc339f1d9c59f28c708f3",
+            "text": "服务: login_demo；会话类型: 登录会话；有效期: 20 分钟；可续期: 是；到期边界处理: 恰好到期视为无效；负责人: 认证组",
+            "source": "tables/session-matrix.csv",
+            "heading": "login_demo",
+            "score": 0.01552409339294585,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0061
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 0.0,
+          "gold_precision": 0.0,
+          "hit": 0,
+          "complete_hit": 0
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    },
+    {
+      "id": "q2",
+      "gold": [
+        {
+          "file": "docs/session-rules.md",
+          "heading": "到期边界"
+        },
+        {
+          "file": "docs/expiry-boundary.md",
+          "heading": "结论"
+        }
+      ],
+      "expected": [
+        "无效"
+      ],
+      "retrieval": {
+        "question": "会话恰好到期的那一刻，应该算有效还是无效？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "c9fcbdb20474c938c66d06a6bdf7b6e80e68711f36d52161a1202f49ee79cf02",
+            "text": "# 登录会话有效期规则 > 到期边界\n\n适用服务：login_demo 登录服务。\n\n- 项目约定：当前时刻恰好等于到期时刻时，会话必须判定为无效。\n- 也就是说，`now == expires_at` 属于已过期。\n- 实现上有效条件写作 `now < expires_at`，不要写成 `now <= expires_at`。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 到期边界",
+            "score": 0.6652621798445655,
+            "score_type": "cosine"
+          },
+          {
+            "id": "677d90cf19fce6533ec2b41348b7503cd962aeda916f0e5a03d0fd1910e7339c",
+            "text": "# app/session.py > is_session_valid\n\ndef is_session_valid(now, expires_at):\n    \"\"\"判断会话在 now 时刻是否有效。\n\n    参数都是 Unix 时间戳（秒）。\n    到期时刻本身视为已过期。\n    \"\"\"\n    return now < expires_at",
+            "source": "app/session.py",
+            "heading": "is_session_valid",
+            "score": 0.6296459103201952,
+            "score_type": "cosine"
+          },
+          {
+            "id": "9a5c3670f7105dfbcc0e54508ce182257507ff959647329b56a192acef716172",
+            "text": "# 登录会话边界 > 结论\n\n登录会话有效条件是 now < expires_at。恰好到期时应返回 False，不能使用 now <= expires_at。\n这项结论在现有 session-rules.md 与 app/session.py 中仍成立。\n来源：history/2026-09-12-expiry-bug.md 的结论；本次核对现行规则后整理。",
+            "source": "docs/expiry-boundary.md",
+            "heading": "登录会话边界 > 结论",
+            "score": 0.617496663574319,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "c9fcbdb20474c938c66d06a6bdf7b6e80e68711f36d52161a1202f49ee79cf02",
+            "text": "# 登录会话有效期规则 > 到期边界\n\n适用服务：login_demo 登录服务。\n\n- 项目约定：当前时刻恰好等于到期时刻时，会话必须判定为无效。\n- 也就是说，`now == expires_at` 属于已过期。\n- 实现上有效条件写作 `now < expires_at`，不要写成 `now <= expires_at`。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 到期边界",
+            "score": 6.813848788854673,
+            "score_type": "bm25"
+          },
+          {
+            "id": "5366edfb2197fe1a1be48069f944e3282c2a761e4150a398df9b4379cf28ddc6",
+            "text": "# 常见问题（FAQ） > 用户反馈\"登录状态老是掉\"\n\n1. 先确认会话有效期配置是否被改过，默认 20 分钟。\n2. 再看是不是恰好卡在到期时刻被判定为无效，检查边界用例。\n3. 最后确认前端是否在响应里正确保存了新的令牌。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 用户反馈\"登录状态老是掉\"",
+            "score": 5.370532302607853,
+            "score_type": "bm25"
+          },
+          {
+            "id": "e2b967a980cc79a8626a2fae4f3e09964631499f65bcc339f1d9c59f28c708f3",
+            "text": "服务: login_demo；会话类型: 登录会话；有效期: 20 分钟；可续期: 是；到期边界处理: 恰好到期视为无效；负责人: 认证组",
+            "source": "tables/session-matrix.csv",
+            "heading": "login_demo",
+            "score": 5.1129579905484075,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "c9fcbdb20474c938c66d06a6bdf7b6e80e68711f36d52161a1202f49ee79cf02",
+            "text": "# 登录会话有效期规则 > 到期边界\n\n适用服务：login_demo 登录服务。\n\n- 项目约定：当前时刻恰好等于到期时刻时，会话必须判定为无效。\n- 也就是说，`now == expires_at` 属于已过期。\n- 实现上有效条件写作 `now < expires_at`，不要写成 `now <= expires_at`。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 到期边界",
+            "score": 0.016393442622950817,
+            "score_type": "rrf"
+          },
+          {
+            "id": "677d90cf19fce6533ec2b41348b7503cd962aeda916f0e5a03d0fd1910e7339c",
+            "text": "# app/session.py > is_session_valid\n\ndef is_session_valid(now, expires_at):\n    \"\"\"判断会话在 now 时刻是否有效。\n\n    参数都是 Unix 时间戳（秒）。\n    到期时刻本身视为已过期。\n    \"\"\"\n    return now < expires_at",
+            "source": "app/session.py",
+            "heading": "is_session_valid",
+            "score": 0.015835777126099706,
+            "score_type": "rrf"
+          },
+          {
+            "id": "9a5c3670f7105dfbcc0e54508ce182257507ff959647329b56a192acef716172",
+            "text": "# 登录会话边界 > 结论\n\n登录会话有效条件是 now < expires_at。恰好到期时应返回 False，不能使用 now <= expires_at。\n这项结论在现有 session-rules.md 与 app/session.py 中仍成立。\n来源：history/2026-09-12-expiry-bug.md 的结论；本次核对现行规则后整理。",
+            "source": "docs/expiry-boundary.md",
+            "heading": "登录会话边界 > 结论",
+            "score": 0.01579861111111111,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0061
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.6666666666666666,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 0.5,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 0
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.6666666666666666,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    },
+    {
+      "id": "q3",
+      "gold": [
+        {
+          "file": "docs/logout-requirement.md",
+          "heading": "需要改的地方"
+        }
+      ],
+      "expected": [
+        "app/auth.py"
+      ],
+      "retrieval": {
+        "question": "如果我要给 login_demo 增加退出登录功能，需要改哪些文件？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 0.7005340902386008,
+            "score_type": "cosine"
+          },
+          {
+            "id": "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+            "text": "# 当前退出登录需求（尚未实现） > 需要改的地方\n\n本需求仍作为待实现方案，不表示代码已完成退出功能。\n- app/auth.py：实现 logout()，删除 _TOKEN_STORE 中的令牌记录。\n- app/session.py：增加 invalidate(token) 辅助函数，按原需求优先采用此方案。\n- tests/test_session.py：增加 test_logout_invalidates。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 需要改的地方",
+            "score": 0.6938073411880794,
+            "score_type": "cosine"
+          },
+          {
+            "id": "0a2232710e9671a6c2fb9824c03dadcc540293891ebf00c98e7de7daebd087f8",
+            "text": "# login_demo 测试指南 > 提交前检查\n\n- 单元测试必须全绿。\n- 不要为了通过测试去修改测试文件，测试文件由维护者负责。\n- 新增功能要补一条对应用例，并在提交说明里写清用例名。",
+            "source": "docs/testing-guide.md",
+            "heading": "login_demo 测试指南 > 提交前检查",
+            "score": 0.6806547860193924,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+            "text": "# 当前退出登录需求（尚未实现） > 需要改的地方\n\n本需求仍作为待实现方案，不表示代码已完成退出功能。\n- app/auth.py：实现 logout()，删除 _TOKEN_STORE 中的令牌记录。\n- app/session.py：增加 invalidate(token) 辅助函数，按原需求优先采用此方案。\n- tests/test_session.py：增加 test_logout_invalidates。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 需要改的地方",
+            "score": 14.323185185815412,
+            "score_type": "bm25"
+          },
+          {
+            "id": "0a2232710e9671a6c2fb9824c03dadcc540293891ebf00c98e7de7daebd087f8",
+            "text": "# login_demo 测试指南 > 提交前检查\n\n- 单元测试必须全绿。\n- 不要为了通过测试去修改测试文件，测试文件由维护者负责。\n- 新增功能要补一条对应用例，并在提交说明里写清用例名。",
+            "source": "docs/testing-guide.md",
+            "heading": "login_demo 测试指南 > 提交前检查",
+            "score": 11.351815075598822,
+            "score_type": "bm25"
+          },
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 6.975628544914615,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 0.016237314597970336,
+            "score_type": "rrf"
+          },
+          {
+            "id": "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+            "text": "# 当前退出登录需求（尚未实现） > 需要改的地方\n\n本需求仍作为待实现方案，不表示代码已完成退出功能。\n- app/auth.py：实现 logout()，删除 _TOKEN_STORE 中的令牌记录。\n- app/session.py：增加 invalidate(token) 辅助函数，按原需求优先采用此方案。\n- tests/test_session.py：增加 test_logout_invalidates。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 需要改的地方",
+            "score": 0.016208355367530406,
+            "score_type": "rrf"
+          },
+          {
+            "id": "0a2232710e9671a6c2fb9824c03dadcc540293891ebf00c98e7de7daebd087f8",
+            "text": "# login_demo 测试指南 > 提交前检查\n\n- 单元测试必须全绿。\n- 不要为了通过测试去修改测试文件，测试文件由维护者负责。\n- 新增功能要补一条对应用例，并在提交说明里写清用例名。",
+            "source": "docs/testing-guide.md",
+            "heading": "login_demo 测试指南 > 提交前检查",
+            "score": 0.015949820788530467,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0047
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    },
+    {
+      "id": "q4",
+      "gold": [
+        {
+          "file": "docs/testing-guide.md",
+          "heading": "测试入口"
+        }
+      ],
+      "expected": [
+        "python -m pytest tests/test_session.py -q"
+      ],
+      "retrieval": {
+        "question": "退出登录改完以后，用哪条命令验证？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 0.7238661407087777,
+            "score_type": "cosine"
+          },
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 0.6781418127523698,
+            "score_type": "cosine"
+          },
+          {
+            "id": "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+            "text": "# 当前退出登录需求（尚未实现） > 需要改的地方\n\n本需求仍作为待实现方案，不表示代码已完成退出功能。\n- app/auth.py：实现 logout()，删除 _TOKEN_STORE 中的令牌记录。\n- app/session.py：增加 invalidate(token) 辅助函数，按原需求优先采用此方案。\n- tests/test_session.py：增加 test_logout_invalidates。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 需要改的地方",
+            "score": 0.6428818798733422,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "77c4a8863f8d6c02e9ae4e0e64e3e1989b5441d95f7447b852807867516da3b8",
+            "text": "# 常见问题（FAQ） > 忘记测试命令怎么办\n\n- 见 `docs/testing-guide.md`，入口是 `python -m pytest tests/test_session.py -q`。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 忘记测试命令怎么办",
+            "score": 4.6604243956211215,
+            "score_type": "bm25"
+          },
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 3.960806092338067,
+            "score_type": "bm25"
+          },
+          {
+            "id": "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+            "text": "# 当前退出登录需求（尚未实现） > 需要改的地方\n\n本需求仍作为待实现方案，不表示代码已完成退出功能。\n- app/auth.py：实现 logout()，删除 _TOKEN_STORE 中的令牌记录。\n- app/session.py：增加 invalidate(token) 辅助函数，按原需求优先采用此方案。\n- tests/test_session.py：增加 test_logout_invalidates。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 需要改的地方",
+            "score": 3.258279400876867,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 0.01631411951348493,
+            "score_type": "rrf"
+          },
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 0.01597782258064516,
+            "score_type": "rrf"
+          },
+          {
+            "id": "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+            "text": "# 当前退出登录需求（尚未实现） > 需要改的地方\n\n本需求仍作为待实现方案，不表示代码已完成退出功能。\n- app/auth.py：实现 logout()，删除 _TOKEN_STORE 中的令牌记录。\n- app/session.py：增加 invalidate(token) 辅助函数，按原需求优先采用此方案。\n- tests/test_session.py：增加 test_logout_invalidates。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 需要改的地方",
+            "score": 0.015873015873015872,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.004
+      },
+      "metrics": {
+        "vector": {
+          "recall": 0.0,
+          "gold_precision": 0.0,
+          "hit": 0,
+          "complete_hit": 0
+        },
+        "bm25": {
+          "recall": 0.0,
+          "gold_precision": 0.0,
+          "hit": 0,
+          "complete_hit": 0
+        },
+        "hybrid": {
+          "recall": 0.0,
+          "gold_precision": 0.0,
+          "hit": 0,
+          "complete_hit": 0
+        }
+      }
+    },
+    {
+      "id": "q5",
+      "gold": [
+        {
+          "file": "docs/logout-requirement.md",
+          "heading": "验收标准"
+        }
+      ],
+      "expected": [
+        "False"
+      ],
+      "retrieval": {
+        "question": "用户点登出以后，还能拿原来的令牌调用 check 吗？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 0.7213166180448568,
+            "score_type": "cosine"
+          },
+          {
+            "id": "8628b570464a620442b9d0433b77376b08bee7a89948097021c3d74ab5f147af",
+            "text": "# app/auth.py > expire_at\n\nfrom __future__ import annotations\nimport hashlib\nimport hmac\nimport secrets\nimport time\nfrom .session import SESSION_TTL_SECONDS, is_session_valid, refresh_expiry\n\ndef expire_at(token: str) -> int | None:\n    \"\"\"返回令牌的到期时间戳，令牌不存在时返回 None。\"\"\"\n    record = _TOKEN_STORE.get(token)\n    return record[\"expires_at\"] if record else None",
+            "source": "app/auth.py",
+            "heading": "expire_at",
+            "score": 0.6194938330668743,
+            "score_type": "cosine"
+          },
+          {
+            "id": "2e92117f2f57540a6af947be94a636b0ee37bead90edb3f3217139439bca39db",
+            "text": "# login_demo 测试指南 > 关键用例\n\n- `test_expire_boundary`：覆盖 `now == expires_at`，期望返回 `False`。\n- `test_refresh_extends_ttl`：覆盖续期后到期时间被推后 20 分钟。\n- `test_logout_invalidates`：退出登录后，同一个会话令牌应判定为无效。",
+            "source": "docs/testing-guide.md",
+            "heading": "login_demo 测试指南 > 关键用例",
+            "score": 0.6155576106450068,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 8.75049310654455,
+            "score_type": "bm25"
+          },
+          {
+            "id": "5366edfb2197fe1a1be48069f944e3282c2a761e4150a398df9b4379cf28ddc6",
+            "text": "# 常见问题（FAQ） > 用户反馈\"登录状态老是掉\"\n\n1. 先确认会话有效期配置是否被改过，默认 20 分钟。\n2. 再看是不是恰好卡在到期时刻被判定为无效，检查边界用例。\n3. 最后确认前端是否在响应里正确保存了新的令牌。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 用户反馈\"登录状态老是掉\"",
+            "score": 4.0328051697456555,
+            "score_type": "bm25"
+          },
+          {
+            "id": "aaf646cc092b3b98c92f809fd785e2d1d92f8435025f59107c7d9555b10a6ebb",
+            "text": "# app/auth.py > check\n\nfrom __future__ import annotations\nimport hashlib\nimport hmac\nimport secrets\nimport time\nfrom .session import SESSION_TTL_SECONDS, is_session_valid, refresh_expiry\n\ndef check(token: str, now: int | None = None) -> bool:\n    \"\"\"按令牌查询会话是否有效。\"\"\"\n    if not verify_token(token):\n        return False\n    record = _TOKEN_STORE.get(token)\n    if record is None:\n        return False\n    now = int(now if now is not None else time.time())\n    return is_session_valid(now, record[\"expires_at\"])",
+            "source": "app/auth.py",
+            "heading": "check",
+            "score": 3.4710266576139395,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 0.016393442622950817,
+            "score_type": "rrf"
+          },
+          {
+            "id": "8628b570464a620442b9d0433b77376b08bee7a89948097021c3d74ab5f147af",
+            "text": "# app/auth.py > expire_at\n\nfrom __future__ import annotations\nimport hashlib\nimport hmac\nimport secrets\nimport time\nfrom .session import SESSION_TTL_SECONDS, is_session_valid, refresh_expiry\n\ndef expire_at(token: str) -> int | None:\n    \"\"\"返回令牌的到期时间戳，令牌不存在时返回 None。\"\"\"\n    record = _TOKEN_STORE.get(token)\n    return record[\"expires_at\"] if record else None",
+            "source": "app/auth.py",
+            "heading": "expire_at",
+            "score": 0.015702087286527514,
+            "score_type": "rrf"
+          },
+          {
+            "id": "aaf646cc092b3b98c92f809fd785e2d1d92f8435025f59107c7d9555b10a6ebb",
+            "text": "# app/auth.py > check\n\nfrom __future__ import annotations\nimport hashlib\nimport hmac\nimport secrets\nimport time\nfrom .session import SESSION_TTL_SECONDS, is_session_valid, refresh_expiry\n\ndef check(token: str, now: int | None = None) -> bool:\n    \"\"\"按令牌查询会话是否有效。\"\"\"\n    if not verify_token(token):\n        return False\n    record = _TOKEN_STORE.get(token)\n    if record is None:\n        return False\n    now = int(now if now is not None else time.time())\n    return is_session_valid(now, record[\"expires_at\"])",
+            "source": "app/auth.py",
+            "heading": "check",
+            "score": 0.01553113553113553,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0044
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    },
+    {
+      "id": "q6",
+      "gold": [
+        {
+          "file": "app/session.py",
+          "heading": ""
+        }
+      ],
+      "expected": [
+        "1200"
+      ],
+      "retrieval": {
+        "question": "SESSION_TTL_SECONDS 这个常量的值是多少？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "32123a136281987ee1f2d68b89eb77ad8a02c837b3651d7a2d5b5de3ca558350",
+            "text": "# app/session.py > SESSION_TTL_SECONDS\n\nSESSION_TTL_SECONDS = 20 * 60  # 登录会话有效期，单位秒",
+            "source": "app/session.py",
+            "heading": "SESSION_TTL_SECONDS",
+            "score": 0.6765953088403408,
+            "score_type": "cosine"
+          },
+          {
+            "id": "dc99dd91f324ce697ebf9261f9e460a60880f16c1ca6f91fd35562a9d7ec3a6e",
+            "text": "# app/config.py > SESSION_TTL_MINUTES\n\nimport os\n\nSESSION_TTL_MINUTES = os.environ.get(\"SESSION_TTL_MINUTES\", \"\")",
+            "source": "app/config.py",
+            "heading": "SESSION_TTL_MINUTES",
+            "score": 0.6288307735799039,
+            "score_type": "cosine"
+          },
+          {
+            "id": "8185e84bbb20482a7c09f5d5f07a370c3a8831d7db58cac326fe49fa2b626266",
+            "text": "# app/session.py > refresh_expiry\n\ndef refresh_expiry(now):\n    \"\"\"返回续期后的新到期时间。\"\"\"\n    return now + SESSION_TTL_SECONDS",
+            "source": "app/session.py",
+            "heading": "refresh_expiry",
+            "score": 0.5972741235831105,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "32123a136281987ee1f2d68b89eb77ad8a02c837b3651d7a2d5b5de3ca558350",
+            "text": "# app/session.py > SESSION_TTL_SECONDS\n\nSESSION_TTL_SECONDS = 20 * 60  # 登录会话有效期，单位秒",
+            "source": "app/session.py",
+            "heading": "SESSION_TTL_SECONDS",
+            "score": 5.578398081704818,
+            "score_type": "bm25"
+          },
+          {
+            "id": "8185e84bbb20482a7c09f5d5f07a370c3a8831d7db58cac326fe49fa2b626266",
+            "text": "# app/session.py > refresh_expiry\n\ndef refresh_expiry(now):\n    \"\"\"返回续期后的新到期时间。\"\"\"\n    return now + SESSION_TTL_SECONDS",
+            "source": "app/session.py",
+            "heading": "refresh_expiry",
+            "score": 5.240713941404072,
+            "score_type": "bm25"
+          },
+          {
+            "id": "677d90cf19fce6533ec2b41348b7503cd962aeda916f0e5a03d0fd1910e7339c",
+            "text": "# app/session.py > is_session_valid\n\ndef is_session_valid(now, expires_at):\n    \"\"\"判断会话在 now 时刻是否有效。\n\n    参数都是 Unix 时间戳（秒）。\n    到期时刻本身视为已过期。\n    \"\"\"\n    return now < expires_at",
+            "source": "app/session.py",
+            "heading": "is_session_valid",
+            "score": 4.978592453859857,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "32123a136281987ee1f2d68b89eb77ad8a02c837b3651d7a2d5b5de3ca558350",
+            "text": "# app/session.py > SESSION_TTL_SECONDS\n\nSESSION_TTL_SECONDS = 20 * 60  # 登录会话有效期，单位秒",
+            "source": "app/session.py",
+            "heading": "SESSION_TTL_SECONDS",
+            "score": 0.016393442622950817,
+            "score_type": "rrf"
+          },
+          {
+            "id": "8185e84bbb20482a7c09f5d5f07a370c3a8831d7db58cac326fe49fa2b626266",
+            "text": "# app/session.py > refresh_expiry\n\ndef refresh_expiry(now):\n    \"\"\"返回续期后的新到期时间。\"\"\"\n    return now + SESSION_TTL_SECONDS",
+            "source": "app/session.py",
+            "heading": "refresh_expiry",
+            "score": 0.015949820788530467,
+            "score_type": "rrf"
+          },
+          {
+            "id": "dc99dd91f324ce697ebf9261f9e460a60880f16c1ca6f91fd35562a9d7ec3a6e",
+            "text": "# app/config.py > SESSION_TTL_MINUTES\n\nimport os\n\nSESSION_TTL_MINUTES = os.environ.get(\"SESSION_TTL_MINUTES\", \"\")",
+            "source": "app/config.py",
+            "heading": "SESSION_TTL_MINUTES",
+            "score": 0.015702087286527514,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0041
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.6666666666666666,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 1.0,
+          "gold_precision": 1.0,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.6666666666666666,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    },
+    {
+      "id": "q7",
+      "gold": [
+        {
+          "file": "docs/session-rules.md",
+          "heading": "有效期长度"
+        },
+        {
+          "file": "docs/payment-session.md",
+          "heading": "与登录会话的区别"
+        }
+      ],
+      "expected": [
+        "20 分钟",
+        "5 分钟"
+      ],
+      "retrieval": {
+        "question": "登录会话和支付会话在有效期、能不能续期上有什么区别？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "7b9afcaff3c7b67197ae16f203503b09f4f71bced32c94d682d5a03903724965",
+            "text": "# 支付会话规则 > 与登录会话的区别\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 登录会话 20 分钟、可续期；支付会话 5 分钟、不可续期。\n- 两者共用 `expires_at` 字段名，排查问题时先确认是哪个服务的会话。",
+            "source": "docs/payment-session.md",
+            "heading": "支付会话规则 > 与登录会话的区别",
+            "score": 0.7208988184133395,
+            "score_type": "cosine"
+          },
+          {
+            "id": "6c8d98ca12b1301a572407037e6e7bccb311ee0d4275d3003bccce9203adc535",
+            "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 20 分钟。\n- 计时方式：从签发时刻开始计算，20 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 有效期长度",
+            "score": 0.7013047046184278,
+            "score_type": "cosine"
+          },
+          {
+            "id": "d5934afbbedbf467f1f0c720bf1280c1020ce203127aa5b9251819381492683c",
+            "text": "服务: pay_gateway；会话类型: 支付会话；有效期: 5 分钟；可续期: 否；到期边界处理: 到期即置为超时；负责人: 支付组",
+            "source": "tables/session-matrix.csv",
+            "heading": "pay_gateway",
+            "score": 0.6928448900145078,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "7b9afcaff3c7b67197ae16f203503b09f4f71bced32c94d682d5a03903724965",
+            "text": "# 支付会话规则 > 与登录会话的区别\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 登录会话 20 分钟、可续期；支付会话 5 分钟、不可续期。\n- 两者共用 `expires_at` 字段名，排查问题时先确认是哪个服务的会话。",
+            "source": "docs/payment-session.md",
+            "heading": "支付会话规则 > 与登录会话的区别",
+            "score": 11.286644749048161,
+            "score_type": "bm25"
+          },
+          {
+            "id": "9495ee2fb2d28ec3e0e19ccd8402a896335605f3afec71185cd24f2eeb988743",
+            "text": "# 登录会话有效期规则 > 不适用范围\n\n适用服务：login_demo 登录服务。\n\n- 本节规则只约束登录会话，不适用于支付会话、匿名浏览会话。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 不适用范围",
+            "score": 6.721369037743317,
+            "score_type": "bm25"
+          },
+          {
+            "id": "d5934afbbedbf467f1f0c720bf1280c1020ce203127aa5b9251819381492683c",
+            "text": "服务: pay_gateway；会话类型: 支付会话；有效期: 5 分钟；可续期: 否；到期边界处理: 到期即置为超时；负责人: 支付组",
+            "source": "tables/session-matrix.csv",
+            "heading": "pay_gateway",
+            "score": 5.0747100319456635,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "7b9afcaff3c7b67197ae16f203503b09f4f71bced32c94d682d5a03903724965",
+            "text": "# 支付会话规则 > 与登录会话的区别\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 登录会话 20 分钟、可续期；支付会话 5 分钟、不可续期。\n- 两者共用 `expires_at` 字段名，排查问题时先确认是哪个服务的会话。",
+            "source": "docs/payment-session.md",
+            "heading": "支付会话规则 > 与登录会话的区别",
+            "score": 0.016393442622950817,
+            "score_type": "rrf"
+          },
+          {
+            "id": "d5934afbbedbf467f1f0c720bf1280c1020ce203127aa5b9251819381492683c",
+            "text": "服务: pay_gateway；会话类型: 支付会话；有效期: 5 分钟；可续期: 否；到期边界处理: 到期即置为超时；负责人: 支付组",
+            "source": "tables/session-matrix.csv",
+            "heading": "pay_gateway",
+            "score": 0.015873015873015872,
+            "score_type": "rrf"
+          },
+          {
+            "id": "6c8d98ca12b1301a572407037e6e7bccb311ee0d4275d3003bccce9203adc535",
+            "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 20 分钟。\n- 计时方式：从签发时刻开始计算，20 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+            "source": "docs/session-rules.md",
+            "heading": "登录会话有效期规则 > 有效期长度",
+            "score": 0.015515674693321217,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0042
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.6666666666666666,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 0.5,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 0
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.6666666666666666,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    },
+    {
+      "id": "q8",
+      "gold": [
+        {
+          "file": "docs/faq.md",
+          "heading": "用户反馈\"登录状态老是掉\""
+        }
+      ],
+      "expected": [
+        "20 分钟"
+      ],
+      "retrieval": {
+        "question": "线上反馈登录状态老是掉，按项目现有文档应该怎么排查？",
+        "version": "02826f1df994-6ecfe4a2",
+        "model": "bge",
+        "vector": [
+          {
+            "id": "5366edfb2197fe1a1be48069f944e3282c2a761e4150a398df9b4379cf28ddc6",
+            "text": "# 常见问题（FAQ） > 用户反馈\"登录状态老是掉\"\n\n1. 先确认会话有效期配置是否被改过，默认 20 分钟。\n2. 再看是不是恰好卡在到期时刻被判定为无效，检查边界用例。\n3. 最后确认前端是否在响应里正确保存了新的令牌。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 用户反馈\"登录状态老是掉\"",
+            "score": 0.6838117519913788,
+            "score_type": "cosine"
+          },
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 0.6212821156362707,
+            "score_type": "cosine"
+          },
+          {
+            "id": "77c4a8863f8d6c02e9ae4e0e64e3e1989b5441d95f7447b852807867516da3b8",
+            "text": "# 常见问题（FAQ） > 忘记测试命令怎么办\n\n- 见 `docs/testing-guide.md`，入口是 `python -m pytest tests/test_session.py -q`。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 忘记测试命令怎么办",
+            "score": 0.6087681415055701,
+            "score_type": "cosine"
+          }
+        ],
+        "bm25": [
+          {
+            "id": "5366edfb2197fe1a1be48069f944e3282c2a761e4150a398df9b4379cf28ddc6",
+            "text": "# 常见问题（FAQ） > 用户反馈\"登录状态老是掉\"\n\n1. 先确认会话有效期配置是否被改过，默认 20 分钟。\n2. 再看是不是恰好卡在到期时刻被判定为无效，检查边界用例。\n3. 最后确认前端是否在响应里正确保存了新的令牌。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 用户反馈\"登录状态老是掉\"",
+            "score": 13.49556722532668,
+            "score_type": "bm25"
+          },
+          {
+            "id": "7b9afcaff3c7b67197ae16f203503b09f4f71bced32c94d682d5a03903724965",
+            "text": "# 支付会话规则 > 与登录会话的区别\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 登录会话 20 分钟、可续期；支付会话 5 分钟、不可续期。\n- 两者共用 `expires_at` 字段名，排查问题时先确认是哪个服务的会话。",
+            "source": "docs/payment-session.md",
+            "heading": "支付会话规则 > 与登录会话的区别",
+            "score": 4.03777672684291,
+            "score_type": "bm25"
+          },
+          {
+            "id": "5a4b94d24467da66caf017e44cf271a8d29f8734e00f303d3bfa267755059a27",
+            "text": "# 支付会话规则 > 有效期长度\n\n适用服务：pay_gateway 收单网关。本文与登录服务无关。\n\n- 支付会话有效期为 5 分钟。\n- 超时后订单进入 `PAY_TIMEOUT` 状态，需要用户重新下单。",
+            "source": "docs/payment-session.md",
+            "heading": "支付会话规则 > 有效期长度",
+            "score": 3.845168456510222,
+            "score_type": "bm25"
+          }
+        ],
+        "hybrid": [
+          {
+            "id": "5366edfb2197fe1a1be48069f944e3282c2a761e4150a398df9b4379cf28ddc6",
+            "text": "# 常见问题（FAQ） > 用户反馈\"登录状态老是掉\"\n\n1. 先确认会话有效期配置是否被改过，默认 20 分钟。\n2. 再看是不是恰好卡在到期时刻被判定为无效，检查边界用例。\n3. 最后确认前端是否在响应里正确保存了新的令牌。",
+            "source": "docs/faq.md",
+            "heading": "常见问题（FAQ） > 用户反馈\"登录状态老是掉\"",
+            "score": 0.016393442622950817,
+            "score_type": "rrf"
+          },
+          {
+            "id": "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+            "text": "# 当前退出登录需求（尚未实现） > 验收标准\n\n退出登录后，再用原令牌调用 check()，必须返回 False。\n执行 python -m pytest tests/test_session.py -q，全部通过，不改既有测试期望值。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 验收标准",
+            "score": 0.01528532608695652,
+            "score_type": "rrf"
+          },
+          {
+            "id": "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+            "text": "# 当前退出登录需求（尚未实现） > 来源与范围\n\n来源：history/2026-10-06-logout-request.md 的需要改的地方与验收标准。\n保留待实现需求，不将旧背景时长或未决的服务端缓存清理当作当前规则。",
+            "source": "docs/logout-requirement.md",
+            "heading": "当前退出登录需求（尚未实现） > 来源与范围",
+            "score": 0.01504032258064516,
+            "score_type": "rrf"
+          }
+        ],
+        "rrf_weights": [
+          0.7,
+          0.3
+        ],
+        "candidate_k": 20,
+        "top_k": 3,
+        "query_seconds": 0.0044
+      },
+      "metrics": {
+        "vector": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "bm25": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        },
+        "hybrid": {
+          "recall": 1.0,
+          "gold_precision": 0.3333333333333333,
+          "hit": 1,
+          "complete_hit": 1
+        }
+      }
+    }
+  ]
+}

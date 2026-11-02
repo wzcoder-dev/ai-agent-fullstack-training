@@ -1,0 +1,25 @@
+{
+  "original_files": [
+    "app/auth.py",
+    "app/config.py",
+    "app/session.py",
+    "docs/faq.md",
+    "docs/payment-session.md",
+    "docs/session-rules.md",
+    "docs/testing-guide.md",
+    "history/2026-09-12-expiry-bug.md",
+    "history/2026-10-06-logout-request.md",
+    "pdf/PRD-login-2.5.0.pdf",
+    "tables/session-matrix.csv",
+    "web/release-notes-2.4.0.html"
+  ],
+  "excluded": {
+    "history/": "原文保留；仍有效结论与需求整理到当前docs并保留来源",
+    "web/": "v2.4.0历史发布说明",
+    "pdf/": "v2.5.0未生效草稿"
+  },
+  "derived_sources": {
+    "docs/expiry-boundary.md": "history/2026-09-12-expiry-bug.md",
+    "docs/logout-requirement.md": "history/2026-10-06-logout-request.md"
+  }
+}

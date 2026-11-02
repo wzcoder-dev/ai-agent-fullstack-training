@@ -1,0 +1,68 @@
+{
+  "version": "ef7e18d4d9fd-e02708de",
+  "model": "bge",
+  "embedding_model": "BAAI/bge-small-zh-v1.5",
+  "embedding_backend": "torch",
+  "dimensions": 512,
+  "source_hash": "ef7e18d4d9fded91455ca45e3191bc02a061e746ab6696eff6c3f65e74fbf1a3",
+  "nodes": 35,
+  "ttl_minutes": 30,
+  "build_seconds": 2.542,
+  "sample": {
+    "id": "cbedfd35ea990f416a89693cc9824fddf575ae1ce821974abbe2e67848719980",
+    "text": "# app/auth.py > _TOKEN_STORE\n\nfrom __future__ import annotations\nimport hashlib\nimport hmac\nimport secrets\nimport time\nfrom .session import SESSION_TTL_SECONDS, is_session_valid, refresh_expiry\n\n_TOKEN_STORE: dict[str, dict] = {}",
+    "metadata": {
+      "file_path": "app/auth.py",
+      "heading": "_TOKEN_STORE",
+      "part": 0,
+      "status": "current"
+    }
+  },
+  "node_ids": [
+    "cbedfd35ea990f416a89693cc9824fddf575ae1ce821974abbe2e67848719980",
+    "70ae942c9c8268d1b9202ce78581671e9f074d1ac53d1344191f1dee0cd1042d",
+    "8b9905ed9bef02b575229378097df802fab789b2f391be3c5c3d48102a4bad19",
+    "f0cdb6747d93a688833bcd76f9ba91db63fa6c1348952257d622412688bd6751",
+    "7c249eddac455f0e54e172901216d4b8b82ed3de1b933aec4047fcc706ae799d",
+    "aaf646cc092b3b98c92f809fd785e2d1d92f8435025f59107c7d9555b10a6ebb",
+    "8628b570464a620442b9d0433b77376b08bee7a89948097021c3d74ab5f147af",
+    "62a197ee2d2d23fb1bb456b2af3872b2a21368b5bf8ccb29260c0dc2e36415e4",
+    "33782b8df94f075c68b0252381d9a580b345700029225c78677fc89fe99d3541",
+    "56e86a15bfb887b56ef8bf579bf9eb11825b1041b17c19003a9ffa3185273b36",
+    "dc99dd91f324ce697ebf9261f9e460a60880f16c1ca6f91fd35562a9d7ec3a6e",
+    "3c518c0c227e120e287ff8342818d74beb37eadfa9fc0c57613a49a1d7a63f6f",
+    "677d90cf19fce6533ec2b41348b7503cd962aeda916f0e5a03d0fd1910e7339c",
+    "8185e84bbb20482a7c09f5d5f07a370c3a8831d7db58cac326fe49fa2b626266",
+    "9a5c3670f7105dfbcc0e54508ce182257507ff959647329b56a192acef716172",
+    "4348c7022381a7134ccc5fd95a2840ba21fe37f585ba467efb48ab49f00aae36",
+    "28db03601bcd4ec2d7db97dc82493f25f89e12bb9bde0c1aef82233ba47ac3a8",
+    "77c4a8863f8d6c02e9ae4e0e64e3e1989b5441d95f7447b852807867516da3b8",
+    "6f1393dbbe1172cabf61755b18aa0ebd986fd63327f8fbd2aa28777b1d37bbb1",
+    "74f1e68546d36bc98a6de5c9fd15400851fc7b11fdb9e9adb7cd0fc8d834a293",
+    "a3f72332d9c21adcaf2a9f72c9bff793b50b9dd468f9cb6a896185760d90b729",
+    "5a4b94d24467da66caf017e44cf271a8d29f8734e00f303d3bfa267755059a27",
+    "8b8805ec806b8c15e5dbb6b225b32ba6c2696d26498c57c87713b0f6e0db5cf7",
+    "3457cc96364cb71eb7cd4c8d381fce85be16929657f7c96b33d0ea09a2ef33a8",
+    "5e6141b537e0dd49bc9162153640174719c8c5afd99de42956655872c82e542f",
+    "c9fcbdb20474c938c66d06a6bdf7b6e80e68711f36d52161a1202f49ee79cf02",
+    "685437653a504b9b9784d5072e13c5b3b31fca9a3aa9913ee5ca761c2905be30",
+    "9495ee2fb2d28ec3e0e19ccd8402a896335605f3afec71185cd24f2eeb988743",
+    "b3961278bb5f488f06bfd31ae9bd3bda3b91fb24772bcf68d9f67f61c20cbe17",
+    "7021bb606a467c43b7173f5cf8fca60621da41974cbd5087d5e535684fbbdfa1",
+    "0a2232710e9671a6c2fb9824c03dadcc540293891ebf00c98e7de7daebd087f8",
+    "bc954b1a29daa2267f7704ce28dadd5bef514d25f1e162bb9286694d02cbf7fc",
+    "d5934afbbedbf467f1f0c720bf1280c1020ce203127aa5b9251819381492683c",
+    "8ffb4fb727fdf8cd8d295b2e04d7d6e7bfa47f725f4a5beac8993315e78190d1",
+    "63ec4d854238537d9364baec5821bea112f90c629b2034e56b90cbb295432933"
+  ],
+  "rule_sample": {
+    "id": "5e6141b537e0dd49bc9162153640174719c8c5afd99de42956655872c82e542f",
+    "text": "# 登录会话有效期规则 > 有效期长度\n\n适用服务：login_demo 登录服务。\n\n- 管理后台的登录会话有效期为 30 分钟。\n- 计时方式：从签发时刻开始计算，30 分钟后到期。\n- 空闲会话不自动续期，必须由用户请求触发刷新。",
+    "metadata": {
+      "file_path": "docs/session-rules.md",
+      "heading": "登录会话有效期规则 > 有效期长度",
+      "part": 0,
+      "status": "current"
+    }
+  }
+}
